@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { About } from "@/components/sections/About";
+import { Architecture } from "@/components/sections/Architecture";
 import { Hero } from "@/components/sections/Hero";
 import { Contact } from "@/components/sections/Contact";
 import { Notes } from "@/components/sections/Notes";
 import { Projects } from "@/components/sections/Projects";
+import { Run } from "@/components/sections/Run";
 import { Services } from "@/components/sections/Services";
 import { Telemetry } from "@/components/sections/Telemetry";
 import { githubUrl, profile, site, siteUrl } from "@/content/site";
@@ -35,6 +37,8 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
       <Hero locale={lang} />
       <Telemetry locale={lang} />
       <Services locale={lang} />
+      <Run locale={lang} />
+      <Architecture locale={lang} />
       <Projects locale={lang} />
       <About locale={lang} />
       <Notes locale={lang} />

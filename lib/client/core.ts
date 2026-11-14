@@ -10,7 +10,7 @@
  */
 import { inView } from "motion";
 import { decode } from "./decode";
-import { prefersReducedMotion, whenIdle } from "./lazy";
+import { prefersReducedMotion, whenIdle, whenNear } from "./lazy";
 
 
 /* ---------- Reveal on scroll + pointer light ---------- */
@@ -171,6 +171,13 @@ function canvasBg() {
   }, 3000);
 }
 
+function demos() {
+  const el = document.querySelector<HTMLElement>("[data-demos]");
+  if (el) whenNear(el, () => void import("./demos").then((m) => m.mountDemos(el)));
+  const d = document.querySelector<HTMLElement>("[data-diagram]");
+  if (d) whenNear(d, () => void import("./diagram").then((m) => m.mountDiagram(d)));
+}
+
 motionFx();
 copyEmail();
 langSwitch();
@@ -178,3 +185,4 @@ palette();
 terminal();
 telemetry();
 canvasBg();
+demos();

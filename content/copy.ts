@@ -35,6 +35,8 @@ type Copy = {
     title: string;
     intro: string;
     soon: string;
+    demo: string;
+    tryIt: string;
     readMore: string;
   };
   about: {
@@ -88,6 +90,7 @@ export const copy: Record<Locale, Copy> = {
       label: "Điều hướng chính",
       items: [
         { id: ids.services, label: "Dịch vụ" },
+        { id: ids.run, label: "Chạy thử" },
         { id: ids.projects, label: "Dự án" },
         { id: ids.about, label: "Về mình" },
         { id: ids.notes, label: "Ghi chú" },
@@ -150,6 +153,8 @@ export const copy: Record<Locale, Copy> = {
       intro:
         "Mình đang xây các dự án công khai đầu tiên. Mỗi dự án sẽ có trang riêng: bài toán, cách làm, kết quả và mã nguồn khi sẵn sàng.",
       soon: "Sắp ra mắt",
+      demo: "Bản chạy thử",
+      tryIt: "Chạy thử",
       readMore: "Xem chi tiết",
     },
     about: {
@@ -201,6 +206,7 @@ export const copy: Record<Locale, Copy> = {
       label: "Main navigation",
       items: [
         { id: ids.services, label: "Services" },
+        { id: ids.run, label: "Demos" },
         { id: ids.projects, label: "Work" },
         { id: ids.about, label: "About" },
         { id: ids.notes, label: "Notes" },
@@ -263,6 +269,8 @@ export const copy: Record<Locale, Copy> = {
       intro:
         "I'm building my first public projects. Each one will get its own page: the problem, the approach, the result, and the source code when it's ready.",
       soon: "Coming soon",
+      demo: "Runnable demo",
+      tryIt: "Try it",
       readMore: "Read more",
     },
     about: {
