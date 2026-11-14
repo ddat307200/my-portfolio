@@ -45,16 +45,16 @@ export function Terminal({ locale }: { locale: Locale }) {
     >
       <div className="frame-bar">
         <span className="flex items-center gap-2">
-          <span className="flex gap-1.5" aria-hidden="true">
+          <span className="flex gap-1.5 max-[420px]:hidden" aria-hidden="true">
             <span className="size-2.5 rounded-full bg-line" />
             <span className="size-2.5 rounded-full bg-line" />
             <span className="size-2.5 rounded-full bg-line" />
           </span>
-          <span className="ml-1.5">{t.title}</span>
+          <span className="ml-1.5 whitespace-nowrap max-[420px]:ml-0">{t.title}</span>
         </span>
         <span className="flex items-center gap-2">
           <span className="dot-ok" aria-hidden="true" />
-          <span className="text-[12px]">{t.scripted}</span>
+          <span className="text-[12px] whitespace-nowrap">{t.scripted}</span>
         </span>
       </div>
 

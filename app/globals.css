@@ -218,17 +218,10 @@ h2:has([data-decode]),
 [data-reconcile-out] {
   contain: layout paint;
 }
-/* Sections below the hero: skipped by layout/paint until they get near the
-   viewport (content-visibility), and each is its own layout island once rendered,
-   so inserting a demo result does not re-lay-out the page. Measured: the first
-   layout and the relayouts after the web fonts arrive were laying out the whole
-   page (~1.5s of a 4x-throttled load). "auto" remembers each section's real size
-   after it has been rendered once. Sections have padding, so focus rings near
-   their edges are not clipped. */
-main > section:not(:first-child) {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
-}
+/* Sections below the hero are not content-visibility:auto: with estimated heights the
+   first jump to an anchor landed off target (measured: #projects 132px above the top
+   on desktop). Layout is kept cheap instead (leaf-only pointer variables, containment
+   on the demo outputs above). */
 
 /* Terminal-style frame: border + top bar with a mono label. */
 .frame {
@@ -349,11 +342,13 @@ main > section:not(:first-child) {
     opacity: 0.5;
   }
 }
-/* With JS one detail is shown at a time; without JS all of them are listed. */
-[data-diagram].is-interactive #arch-detail {
+/* With JS one detail is shown at a time; without JS all of them are listed.
+   Decided by html.js (set before first paint), not by the lazy diagram module, so the
+   section height never changes after load (that moved anchor targets). */
+html.js [data-diagram] #arch-detail {
   grid-template-columns: 1fr;
 }
-[data-diagram].is-interactive [data-node-detail]:not(.is-active) {
+html.js [data-diagram] [data-node-detail]:not(.is-active) {
   display: none;
 }
 

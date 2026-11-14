@@ -198,7 +198,10 @@ function mobileNav() {
   const close = (refocus: boolean) => {
     if (!d.open) return;
     d.open = false;
-    if (refocus) s.focus({ preventScroll: true });
+    sync(); // the "toggle" event is async; keep aria-expanded exact right away
+    // After an anchor jump the browser moves the focus start point to the target, so the
+    // focus goes back to the button once that is done (no scroll: the page stays on the target).
+    if (refocus) setTimeout(() => s.focus({ preventScroll: true }), 0);
   };
   d.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {

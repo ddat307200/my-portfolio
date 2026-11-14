@@ -3,7 +3,6 @@
  * Lazy chunk. Without JS all details stay visible (see globals.css).
  */
 export function mountDiagram(root: HTMLElement) {
-  root.classList.add("is-interactive");
   const nodes = [...root.querySelectorAll<HTMLButtonElement>("[data-node]")];
   const details = [...root.querySelectorAll<HTMLElement>("[data-node-detail]")];
   const show = (id: string, pin = false) => {
