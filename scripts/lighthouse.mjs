@@ -15,6 +15,19 @@ const routes = ["/vi/", "/en/"];
 const root = join(import.meta.dirname, "..");
 const dir = mkdtempSync(join(tmpdir(), "lh-"));
 
+// Lighthouse 13 reports the LCP node inside the "lcp-breakdown-insight" audit.
+function lcpSnippet(audits) {
+  let found = null;
+  (function walk(o) {
+    if (found || !o || typeof o !== "object") return;
+    for (const [k, v] of Object.entries(o)) {
+      if (k === "snippet" && typeof v === "string") return void (found = v);
+      walk(v);
+    }
+  })(audits["lcp-breakdown-insight"]?.details);
+  return found;
+}
+
 const scores = {};
 for (const route of routes) {
   const out = join(dir, `${route.replaceAll("/", "_")}.json`);
@@ -33,7 +46,7 @@ for (const route of routes) {
     lcpMs: Math.round(a["largest-contentful-paint"].numericValue),
     cls: Math.round(a["cumulative-layout-shift"].numericValue * 1000) / 1000,
     tbtMs: Math.round(a["total-blocking-time"].numericValue),
-    lcpElement: a["largest-contentful-paint-element"]?.details?.items?.[0]?.items?.[0]?.node?.snippet ?? null,
+    lcpElement: lcpSnippet(a),
   };
   process.stdout.write(`${route} ${JSON.stringify(scores[route])}\n`);
 }

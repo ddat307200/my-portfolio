@@ -35,8 +35,8 @@ export function Telemetry({ locale }: { locale: Locale }) {
       return (
     <div key={c.key} className={`bg-bg px-4 py-3 ${c.wide ? wide : ""}`}>
       <dt className="flex items-center justify-between gap-2 font-mono text-[12px] text-muted">
-        <span>{c.label}</span>
-        <span className="flex items-center gap-1.5">
+        <span className="min-w-0 truncate">{c.label}</span>
+        <span className="flex shrink-0 items-center gap-1.5">
           {c.source === "live" ? <span className="dot-ok" aria-hidden="true" /> : null}
           <span>{c.source === "live" ? t.live : t.build}</span>
         </span>
