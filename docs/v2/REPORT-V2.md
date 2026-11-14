@@ -20,12 +20,12 @@ BRIEF-V2.md và BRIEF.md được đọc đầy đủ trước khi làm (bước
 
 Ảnh bản cuối (`docs/v2/`): `v-top-1280.png`, `v-full-1280.png`, `v-top-360.png`, `v-menu-360.png`, `v-nojs-360.png`.
 
-## Lighthouse mobile (13.6.0, trung vị 5 lần, ghi bởi `scripts/lighthouse.mjs`, commit `44adc60`)
+## Lighthouse mobile (13.6.0, trung vị 5 lần, ghi bởi `scripts/lighthouse.mjs`, commit `0d3f8c5`)
 
 | Route | Performance | A11y | Best Practices | SEO | LCP | TBT | CLS |
 |---|---|---|---|---|---|---|---|
-| `/vi/` | 97 (93–99) | 100 | 100 | 100 | 1036ms | 199ms | 0,001 |
-| `/en/` | 100 (99–100) | 100 | 100 | 100 | 995ms | 90ms | 0,03 |
+| `/vi/` | 100 (99–100) | 100 | 100 | 100 | 1048ms | 21ms | 0 |
+| `/en/` | 100 (98–100) | 100 | 100 | 100 | 937ms | 91ms | 0 |
 
 Ngân sách mục 4: Performance ≥ 90, A11y/BP/SEO ≥ 95 → **đạt**. LCP ≤ 2,5s, CLS ≤ 0,1 → **đạt**; phần tử LCP là đoạn chữ hero.
 
@@ -43,7 +43,7 @@ Ghi chú về INP: đo bằng **headless** cho 344–500ms vì headless trễ d�
 ## Chưa đo / chưa kiểm chứng / "Sắp ra mắt"
 
 - **Chưa thử trên thiết bị thật:** điện thoại thật (CPU 4x chỉ là giả lập), Mac thật (nhãn `⌘K` mới giả lập `navigator.userAgentData`), trình đọc màn hình thật.
-- **Style & Layout** vẫn khoảng 0,8–1,0 giây trên luồng chính trong Lighthouse (trước khoảng 1,1 giây). Không nằm trong ngân sách mục 4 nhưng chưa giải quyết triệt để.
+- **Style & Layout** giảm từ khoảng 1,0–1,3 giây xuống 0,6–0,7 giây trong Lighthouse (commit `0d3f8c5`, `font-display: optional`: font đã preload nên không còn bước đổi font làm layout lại cả trang). Đo bằng trace và 3 lần Lighthouse trước/sau; chưa xuống dưới 0,5 giây. Trade-off: lần truy cập đầu trên mạng rất chậm có thể hiển thị font dự phòng đến khi tải lại.
 - **Dự án:** "Website & landing page" và "Tự động hóa việc lặp lại bằng AI" vẫn "Sắp ra mắt". "Công cụ web nhỏ" là "Bản chạy thử" (hai demo), **không** phải case study, không có số liệu kinh doanh, không có liên kết mã nguồn vì chưa có repo công khai.
 - **Chưa đăng lên mạng:** cần repo và tên miền của chủ trang.
 

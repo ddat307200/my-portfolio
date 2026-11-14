@@ -182,13 +182,13 @@ Lighthouse 13.6.0 **mobile** (4G giả lập + CPU 4x), Chrome headless, trung v
 
 | Route | Performance | A11y | Best Practices | SEO | LCP | TBT | CLS |
 |---|---|---|---|---|---|---|---|
-| `/vi/` | 97 (93–99) | 100 | 100 | 100 | 1036 ms | 199 ms | 0,001 |
-| `/en/` | 100 (99–100) | 100 | 100 | 100 | 995 ms | 90 ms | 0,03 |
+| `/vi/` | 100 (99–100) | 100 | 100 | 100 | 1048 ms | 21 ms | 0 |
+| `/en/` | 100 (98–100) | 100 | 100 | 100 | 937 ms | 91 ms | 0 |
 
 - JS (`npm run size`, gzip): lần đầu **2,6KB**, tổng sau khi nạp hết chunk **22,9KB** (ngân sách: ≤ 120KB lần đầu, ≤ 300KB tổng). Phần tử LCP là đoạn chữ hero, không phải canvas.
 - FPS đo bằng rAF dưới CPU 4x (headless, máy dev, 5 giây rê chuột): desktop 71,2; mobile 360px 71,7 (canvas tắt trên cảm ứng, dùng nền tĩnh).
-- **INP** (≤ 200ms), đo bằng Chrome có cửa sổ thật dưới CPU 4x, kịch bản gõ lệnh terminal + chạy hai demo + mở bảng lệnh, 3 lần: desktop **80–96ms**, mobile 360px **48–72ms** (`HEADFUL=1 node scripts/measure-inp.mjs`). **Đừng đo INP bằng headless**: cùng kịch bản cho 344–500ms vì headless trễ dựng khung hình (kiểm chứng: trace không có tác vụ nào trên 14ms ở bất kỳ luồng nào; cùng lần bấm là 40ms ở Chrome thật).
-- Style & Layout vẫn khoảng 0,8–1,0 giây trên luồng chính trong Lighthouse (trước khoảng 1,1 giây).
+- **INP** (≤ 200ms), đo bằng Chrome có cửa sổ thật dưới CPU 4x, kịch bản gõ lệnh terminal + chạy hai demo + mở bảng lệnh, 3 lần: desktop **80–96ms**, mobile 360px **48–72ms** (lần đo cuối: 96ms / 56ms) (`HEADFUL=1 node scripts/measure-inp.mjs`). **Đừng đo INP bằng headless**: cùng kịch bản cho 344–500ms vì headless trễ dựng khung hình (kiểm chứng: trace không có tác vụ nào trên 14ms ở bất kỳ luồng nào; cùng lần bấm là 40ms ở Chrome thật).
+- Style & Layout trong Lighthouse: khoảng 0,6–0,7 giây (trước khoảng 1,0–1,3 giây). Giảm nhờ `font-display: optional` (font đã preload, không còn bước đổi font làm layout lại cả trang). Trade-off: lần truy cập đầu trên mạng rất chậm có thể hiển thị font dự phòng cho đến khi tải lại.
 - Đã kiểm tra: bàn phím (menu mobile, Esc, Ctrl/Cmd+K, vòng focus 3px), `prefers-reduced-motion`, không JavaScript, 360/1280px không tràn ngang, console không lỗi, không còn chữ dưới 12px, anchor nhảy đúng chỗ.
 - **Chưa kiểm tra:** điện thoại thật (CPU 4x chỉ là giả lập), Mac thật (nhãn `⌘K` mới giả lập), trình đọc màn hình thật.
 
