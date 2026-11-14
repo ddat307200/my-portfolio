@@ -12,7 +12,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   // Branded site-wide 404 (app/global-not-found.tsx); needed with multiple root layouts.
-  experimental: { globalNotFound: true },
+  // inlineCss: put the (small) CSS in the HTML instead of render-blocking <link> requests.
+  experimental: { globalNotFound: true, inlineCss: true },
 };
 
 export default nextConfig;

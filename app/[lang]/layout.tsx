@@ -52,7 +52,9 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
 // Runs before first paint: marks JS as available and decides whether the hero
 // terminal should replay its boot sequence (not with reduced motion, once per session).
 // Safety net: if the app never takes over, the static transcript is revealed after 7s.
-const headScript = `(function(){var d=document.documentElement;d.classList.add('js');try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('boot-played')){d.setAttribute('data-boot','play');setTimeout(function(){d.removeAttribute('data-boot')},7000)}}catch(e){}})();`;
+// It also picks the palette shortcut label (mac: ⌘K, others: Ctrl K, touch: icon) before
+// the first paint, so the header never shifts.
+const headScript = `(function(){var d=document.documentElement;d.classList.add('js');try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('boot-played')){d.setAttribute('data-boot','play');setTimeout(function(){d.removeAttribute('data-boot')},7000)}}catch(e){}try{var n=navigator,p=(n.userAgentData&&n.userAgentData.platform)||n.platform||'';d.setAttribute('data-kbd',matchMedia('(hover: none) and (pointer: coarse)').matches?'touch':/mac|iphone|ipad|ipod/i.test(p)?'mac':'ctrl')}catch(e){}})();`;
 
 export default async function LangLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;

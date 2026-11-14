@@ -27,7 +27,7 @@ export function Notes({ locale }: { locale: Locale }) {
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span>
-                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] tracking-widest text-muted">
+                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[12px] tracking-widest text-muted">
                     <span className="text-accent">{n.category}</span>
                     <time dateTime={n.date}>{formatDate(n.date, locale)}</time>
                     <span>{t.minRead(n.minutes)}</span>

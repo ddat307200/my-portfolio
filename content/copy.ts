@@ -6,7 +6,14 @@ import { ids } from "./ids";
 type Copy = {
   meta: { title: string; description: string };
   skip: string;
-  nav: { label: string; items: { id: string; label: string }[]; contact: string; home: string };
+  nav: {
+    label: string;
+    items: { id: string; label: string }[];
+    contact: string;
+    home: string;
+    menu: string;
+    menuItems: { id: string; label: string }[];
+  };
   langSwitch: { label: string; short: string };
   hero: {
     eyebrow: string;
@@ -97,6 +104,16 @@ export const copy: Record<Locale, Copy> = {
       ],
       contact: "Liên hệ",
       home: "Trang chủ",
+      menu: "Mục trên trang",
+      menuItems: [
+        { id: ids.status, label: "Đo đạc" },
+        { id: ids.services, label: "Dịch vụ" },
+        { id: ids.run, label: "Chạy thử" },
+        { id: ids.projects, label: "Dự án" },
+        { id: ids.about, label: "Về mình" },
+        { id: ids.notes, label: "Ghi chú" },
+        { id: ids.contact, label: "Liên hệ" },
+      ],
     },
     langSwitch: { label: "Switch to English", short: "EN" },
     hero: {
@@ -213,6 +230,16 @@ export const copy: Record<Locale, Copy> = {
       ],
       contact: "Contact",
       home: "Home",
+      menu: "Page sections",
+      menuItems: [
+        { id: ids.status, label: "Status" },
+        { id: ids.services, label: "Services" },
+        { id: ids.run, label: "Demos" },
+        { id: ids.projects, label: "Work" },
+        { id: ids.about, label: "About" },
+        { id: ids.notes, label: "Notes" },
+        { id: ids.contact, label: "Contact" },
+      ],
     },
     langSwitch: { label: "Chuyển sang tiếng Việt", short: "VI" },
     hero: {

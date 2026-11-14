@@ -7,9 +7,11 @@ import type { Locale } from "@/lib/i18n";
 export function Hero({ locale }: { locale: Locale }) {
   const t = consoleCopy[locale].hero;
   return (
-    <section aria-labelledby="hero-title" className="relative overflow-hidden border-b border-line" data-glow>
+    <section aria-labelledby="hero-title" className="relative overflow-hidden border-b border-line">
       <div aria-hidden="true" className="hero-dots pointer-events-none absolute inset-0" data-hero-fallback />
-      <div aria-hidden="true" className="hero-glow pointer-events-none absolute inset-0" />
+      {/* --mx/--my are set on this leaf element only (not the section): a custom property
+          change then restyles one element instead of the whole hero subtree. */}
+      <div aria-hidden="true" className="hero-glow pointer-events-none absolute inset-0" data-glow />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"

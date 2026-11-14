@@ -11,5 +11,5 @@ export const mono = JetBrains_Mono({
   subsets: ["latin", "vietnamese"],
   display: "swap",
   variable: "--font-jetbrains",
-  preload: false,
+  // Preloaded too: both fonts arrive together, so the page re-lays-out once, not twice.
 });

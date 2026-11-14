@@ -20,7 +20,7 @@ export function Projects({ locale }: { locale: Locale }) {
             // Placeholder: dashed border, no link, no description of results.
             return (
               <li key={p.slug} data-reveal className="rounded-2xl border border-dashed border-line p-6">
-                <div className="flex items-center justify-between gap-3 font-mono text-[11px] tracking-widest">
+                <div className="flex items-center justify-between gap-3 font-mono text-[12px] tracking-widest">
                   <span className="text-muted">
                     <span aria-hidden="true">{num} · </span>
                     {p.label}
@@ -39,7 +39,7 @@ export function Projects({ locale }: { locale: Locale }) {
                   href={`#${p.anchor}`}
                   className="spotlight group block h-full rounded-[10px] border border-line bg-surface p-6 transition-colors duration-200 hover:bg-surface-2"
                 >
-                  <span className="flex items-center justify-between gap-3 font-mono text-[11px] tracking-widest">
+                  <span className="flex items-center justify-between gap-3 font-mono text-[12px] tracking-widest">
                     <span className="text-muted">
                       <span aria-hidden="true">{num} · </span>
                       {p.label}
@@ -65,7 +65,7 @@ export function Projects({ locale }: { locale: Locale }) {
                 href={`/${locale}/projects/${p.slug}/`}
                 className="spotlight group block h-full rounded-2xl border border-line bg-surface p-6 transition-colors duration-200 hover:bg-surface-2"
               >
-                <span className="font-mono text-[11px] tracking-widest text-muted">
+                <span className="font-mono text-[12px] tracking-widest text-muted">
                   <span aria-hidden="true">{num} · </span>
                   {p.label}
                 </span>

@@ -90,13 +90,13 @@ body {
 }
 
 /* Spotlight border: a glow that follows the pointer along a card's border.
-   --sx / --sy are set per card by PointerFx; without them nothing shows. */
+   core.js adds a leaf <span class="spot"> on first hover and sets --sx/--sy on it
+   (not on the card), so a pointer move restyles one element, not the card subtree. */
 .spotlight {
   position: relative;
   isolation: isolate;
 }
-.spotlight::before {
-  content: "";
+.spotlight > .spot {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
@@ -116,7 +116,7 @@ body {
   pointer-events: none;
   z-index: 1;
 }
-.spotlight:hover::before {
+.spotlight:hover > .spot {
   opacity: 1;
 }
 
@@ -218,11 +218,16 @@ h2:has([data-decode]),
 [data-reconcile-out] {
   contain: layout paint;
 }
-/* Each section below the hero is its own layout/paint island: inserting a result
-   table in [03] run/ does not re-lay-out the rest of the page (keeps INP low).
-   Sections have padding, so focus rings near their edges are not clipped. */
+/* Sections below the hero: skipped by layout/paint until they get near the
+   viewport (content-visibility), and each is its own layout island once rendered,
+   so inserting a demo result does not re-lay-out the page. Measured: the first
+   layout and the relayouts after the web fonts arrive were laying out the whole
+   page (~1.5s of a 4x-throttled load). "auto" remembers each section's real size
+   after it has been rendered once. Sections have padding, so focus rings near
+   their edges are not clipped. */
 main > section:not(:first-child) {
-  contain: layout paint;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }
 
 /* Terminal-style frame: border + top bar with a mono label. */
@@ -350,6 +355,21 @@ main > section:not(:first-child) {
 }
 [data-diagram].is-interactive [data-node-detail]:not(.is-active) {
   display: none;
+}
+
+/* Palette button: one variant per platform, chosen before first paint (no shift).
+   Default (no data-kbd yet) is the Ctrl variant. */
+[data-palette-open] {
+  display: inline-flex;
+}
+[data-kbd-v] {
+  display: none;
+}
+html:not([data-kbd]) [data-kbd-v="ctrl"],
+html[data-kbd="ctrl"] [data-kbd-v="ctrl"],
+html[data-kbd="mac"] [data-kbd-v="mac"],
+html[data-kbd="touch"] [data-kbd-v="touch"] {
+  display: inline-flex;
 }
 
 /* Things that only make sense with JS are hidden without it (html.js is set in <head>). */

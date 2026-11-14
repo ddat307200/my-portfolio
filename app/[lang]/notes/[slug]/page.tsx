@@ -47,7 +47,7 @@ export default async function NotePage({ params }: PageProps<"/[lang]/notes/[slu
         <ArrowLeft /> {t.back}
       </Link>
       <article className="mt-10">
-        <p className="flex flex-wrap gap-x-3 font-mono text-[11px] tracking-widest text-muted">
+        <p className="flex flex-wrap gap-x-3 font-mono text-[12px] tracking-widest text-muted">
           <span className="text-accent">{note.category}</span>
           <time dateTime={note.date}>{formatDate(note.date, lang)}</time>
           <span>{t.minRead(note.minutes)}</span>

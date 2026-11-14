@@ -22,7 +22,7 @@ export function Contact({ locale }: { locale: Locale }) {
           <div className="flex min-w-0 items-center gap-3">
             <Mail className="shrink-0 text-accent" width={20} height={20} />
             <div className="min-w-0">
-              <p className="font-mono text-[11px] tracking-widest text-muted uppercase">{t.email}</p>
+              <p className="font-mono text-[12px] tracking-widest text-muted uppercase">{t.email}</p>
               <a href={`mailto:${site.email}`} className={`block truncate ${link}`}>
                 {site.email}
               </a>
@@ -34,7 +34,7 @@ export function Contact({ locale }: { locale: Locale }) {
           <div className="flex items-center gap-3">
             <Chat className="shrink-0 text-accent" width={20} height={20} />
             <div>
-              <p className="font-mono text-[11px] tracking-widest text-muted uppercase">{t.zalo}</p>
+              <p className="font-mono text-[12px] tracking-widest text-muted uppercase">{t.zalo}</p>
               <a href={site.zalo} target="_blank" rel="noopener noreferrer" className={link}>
                 {site.zaloPhone}
               </a>
@@ -45,7 +45,7 @@ export function Contact({ locale }: { locale: Locale }) {
           <div className="flex items-center gap-3">
             <Facebook className="shrink-0 text-accent" width={20} height={20} />
             <div>
-              <p className="font-mono text-[11px] tracking-widest text-muted uppercase">{t.facebook}</p>
+              <p className="font-mono text-[12px] tracking-widest text-muted uppercase">{t.facebook}</p>
               <a href={site.facebook} target="_blank" rel="noopener noreferrer" className={link}>
                 {site.name}
               </a>

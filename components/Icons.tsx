@@ -64,3 +64,16 @@ export const ArrowUp = (p: P) => (
     <path d="M12 19V5M6 11l6-6 6 6" />
   </svg>
 );
+
+export const Search = (p: P) => (
+  <svg {...base} {...p} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="6.5" />
+    <path d="m16 16 4.5 4.5" />
+  </svg>
+);
+
+export const Menu = (p: P) => (
+  <svg {...base} {...p} width={18} height={18} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round">
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </svg>
+);

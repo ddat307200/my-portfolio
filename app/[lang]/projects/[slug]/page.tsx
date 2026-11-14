@@ -57,7 +57,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/project
       >
         <ArrowLeft /> {t.back}
       </Link>
-      <p className="mt-10 font-mono text-[11px] tracking-widest text-accent">{p.label}</p>
+      <p className="mt-10 font-mono text-[12px] tracking-widest text-accent">{p.label}</p>
       <h1 className="h1 mt-3">{p.title[lang]}</h1>
       <p className="mt-4 text-lg text-muted">{p.summary[lang]}</p>
 

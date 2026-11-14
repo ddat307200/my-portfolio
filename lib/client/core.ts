@@ -44,9 +44,17 @@ function motionFx() {
     });
     const card = target?.closest<HTMLElement>(".spotlight");
     if (card) {
+      // Leaf overlay: setting the variables here restyles one element, not the card subtree.
+      let spot = card.querySelector<HTMLElement>(":scope > .spot");
+      if (!spot) {
+        spot = document.createElement("span");
+        spot.className = "spot";
+        spot.setAttribute("aria-hidden", "true");
+        card.prepend(spot);
+      }
       const r = card.getBoundingClientRect();
-      card.style.setProperty("--sx", `${x - r.left}px`);
-      card.style.setProperty("--sy", `${y - r.top}px`);
+      spot.style.setProperty("--sx", `${x - r.left}px`);
+      spot.style.setProperty("--sy", `${y - r.top}px`);
     }
   };
 
@@ -142,7 +150,6 @@ function palette() {
     }
   });
   document.querySelectorAll<HTMLButtonElement>("[data-palette-open]").forEach((b) => {
-    b.hidden = false;
     b.addEventListener("click", () => open(b));
   });
 }
@@ -179,8 +186,36 @@ function demos() {
   if (d) whenNear(d, () => void import("./diagram").then((m) => m.mountDiagram(d)));
 }
 
+/* ---------- Mobile section menu (<details>, works without JS too) ---------- */
+
+function mobileNav() {
+  const d = document.querySelector<HTMLDetailsElement>("[data-mnav]");
+  const s = d?.querySelector("summary");
+  if (!d || !s) return;
+  const sync = () => s.setAttribute("aria-expanded", String(d.open));
+  sync();
+  d.addEventListener("toggle", sync);
+  const close = (refocus: boolean) => {
+    if (!d.open) return;
+    d.open = false;
+    if (refocus) s.focus({ preventScroll: true });
+  };
+  d.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      close(true);
+    }
+  });
+  // Selecting a section closes the menu; the anchor still scrolls, focus returns to the button.
+  d.querySelectorAll("[data-mnav-link]").forEach((a) => a.addEventListener("click", () => close(true)));
+  document.addEventListener("pointerdown", (e) => {
+    if (d.open && e.target instanceof Node && !d.contains(e.target)) close(false);
+  });
+}
+
 motionFx();
 copyEmail();
+mobileNav();
 langSwitch();
 palette();
 terminal();

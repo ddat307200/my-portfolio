@@ -64,7 +64,10 @@ for (const c of [
   await page.waitForFunction(() => /ms/.test(document.querySelector('[data-tm="inp"]')?.textContent ?? ""), { timeout: 15000 });
   const inp = await page.evaluate(() => document.querySelector('[data-tm="inp"]').textContent);
   const slowest = await page.evaluate(() => [...window.__events].sort((a, b) => b.ms - a.ms).slice(0, 4));
-  if (process.env.INP_DEBUG) console.error(c.name, JSON.stringify(await page.evaluate(() => window.__events.map((e) => `${e.at}:${e.type}:${e.target}:${e.ms}`))));
+  if (process.env.INP_DEBUG) {
+    const timeline = await page.evaluate(() => window.__events.map((e) => `${e.at}:${e.type}:${e.target}:${e.ms}`));
+    process.stderr.write(`${c.name} ${JSON.stringify(timeline)}${String.fromCharCode(10)}`);
+  }
   results.push({ case: c.name, inp, slowest });
   await page.close();
 }
