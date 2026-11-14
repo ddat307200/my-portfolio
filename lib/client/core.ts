@@ -150,7 +150,9 @@ function palette() {
 function telemetry() {
   const el = document.querySelector<HTMLElement>("[data-telemetry]");
   if (!el) return;
-  whenIdle(() => void import("./telemetry").then((m) => m.mountTelemetry(el)), 2000);
+  // Loaded when the panel is close to the viewport; LCP/CLS/INP observers use
+  // `buffered: true`, so nothing from the page load is missed.
+  whenNear(el, () => void import("./telemetry").then((m) => m.mountTelemetry(el)), "200px");
 }
 
 /** Decide here (not in the chunk) so the reason is known even when the canvas never loads. */

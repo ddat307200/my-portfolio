@@ -25,7 +25,23 @@ export function mountTelemetry(root: HTMLElement) {
   const samples: number[] = [];
   let frames = 0;
   let last = performance.now();
+  let onScreen = true;
+  let looping = false;
+  // Only count frames while the panel is visible (no work when nobody is looking).
+  new IntersectionObserver((e) => {
+    onScreen = e.some((x) => x.isIntersecting);
+    if (onScreen && !looping) {
+      looping = true;
+      frames = 0;
+      last = performance.now();
+      requestAnimationFrame(loop);
+    }
+  }).observe(root);
   const loop = (now: number) => {
+    if (!onScreen) {
+      looping = false;
+      return;
+    }
     frames++;
     if (now - last >= 500) {
       const fps = Math.round((frames * 1000) / (now - last));
@@ -42,6 +58,7 @@ export function mountTelemetry(root: HTMLElement) {
     }
     requestAnimationFrame(loop);
   };
+  looping = true;
   requestAnimationFrame(loop);
 
   /* ---- environment ---- */
