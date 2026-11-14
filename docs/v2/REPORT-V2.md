@@ -16,6 +16,8 @@ BRIEF-V2.md và BRIEF.md được đọc đầy đủ trước khi làm (bước
 | V2-E | `f33ebf0`, `708014d`, `1325236`, `a013882` | song ngữ, SEO, README V2, workflow chạy test, tối ưu đo cuối | `/en/` không còn tiếng Việt ngoài `lang="vi"`; giảm chuyển động (không boot/canvas/dòng chảy, terminal + demo vẫn chạy); thứ tự Tab; Lighthouse 5 lần |
 | Sửa theo đánh giá | `9e28c86` → `904cd7f`, `20a9b28` | nút phím tắt theo hệ điều hành, menu mobile, chữ ≥ 12px, CSS nhúng, đo lại INP | ảnh bên dưới; chi tiết trong README |
 
+**Ảnh và console theo từng pha** (`docs/v2/phases/`, kèm `phases.json`): dựng lại từ đúng commit của từng pha (V2-A → V2-E) trong git worktree sạch, build bằng `npm run build`, chụp `/vi/` ở 1280px và 360px, đọc console. Cả 5 pha build được, **không tràn ngang, console không có lỗi hay cảnh báo** ở cả hai độ rộng. Lưu ý trung thực: các file này được dựng lại sau này từ commit, không phải ảnh chụp tại thời điểm làm từng pha (lúc đó mình xem trực tiếp trong cửa sổ trình duyệt).
+
 Ảnh bản cuối (`docs/v2/`): `v-top-1280.png`, `v-full-1280.png`, `v-top-360.png`, `v-menu-360.png`, `v-nojs-360.png`.
 
 ## Lighthouse mobile (13.6.0, trung vị 5 lần, ghi bởi `scripts/lighthouse.mjs`, commit `44adc60`)

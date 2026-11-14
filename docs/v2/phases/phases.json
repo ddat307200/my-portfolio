@@ -1,0 +1,85 @@
+{
+  "note": "Rebuilt from each phase commit in a clean git worktree on 2026-11-14T19:58:56.539Z (not captured at the time of the original phase).",
+  "phases": [
+    {
+      "phase": "V2-A",
+      "commit": "a38da1f",
+      "buildOk": true,
+      "buildSeconds": 26,
+      "views": {
+        "360": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        },
+        "1280": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        }
+      }
+    },
+    {
+      "phase": "V2-B",
+      "commit": "31a6184",
+      "buildOk": true,
+      "buildSeconds": 25,
+      "views": {
+        "360": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        },
+        "1280": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        }
+      }
+    },
+    {
+      "phase": "V2-C",
+      "commit": "fa4c39d",
+      "buildOk": true,
+      "buildSeconds": 25,
+      "views": {
+        "360": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        },
+        "1280": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        }
+      }
+    },
+    {
+      "phase": "V2-D",
+      "commit": "25ddac3",
+      "buildOk": true,
+      "buildSeconds": 26,
+      "views": {
+        "360": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        },
+        "1280": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        }
+      }
+    },
+    {
+      "phase": "V2-E",
+      "commit": "f33ebf0",
+      "buildOk": true,
+      "buildSeconds": 27,
+      "views": {
+        "360": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        },
+        "1280": {
+          "overflowPx": 0,
+          "consoleIssues": []
+        }
+      }
+    }
+  ]
+}
