@@ -161,10 +161,9 @@ function canvasBg() {
   if (!slot) return;
   const root = document.documentElement;
   if (prefersReducedMotion()) return void (root.dataset.canvas = "off:reduced");
-  const nav = navigator as Navigator & { deviceMemory?: number };
-  const coarse = matchMedia("(pointer: coarse)").matches;
-  const weak = (navigator.hardwareConcurrency ?? 2) <= 4 || (nav.deviceMemory ?? 8) <= 4;
-  if (coarse && weak) return void (root.dataset.canvas = "off:touch");
+  // The canvas only reacts to a mouse. On touch screens it would just draw the same
+  // static dots as the SVG fallback, so it is not started there at all.
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return void (root.dataset.canvas = "off:touch");
   if (!document.createElement("canvas").getContext) return void (root.dataset.canvas = "off:unsupported");
   whenIdle(() => {
     void import("./canvas").then((m) =>

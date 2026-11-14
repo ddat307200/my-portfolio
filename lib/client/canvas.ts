@@ -1,21 +1,27 @@
 /**
- * Hero background: a dot grid that reacts to the pointer (Canvas 2D, decorative, aria-hidden).
- * - Started after idle by core.ts, never on reduced motion / weak touch devices.
- * - DPR capped at 2; the loop only runs while something moves, then stops.
- * - Paused when the tab is hidden or the hero is off-screen (IntersectionObserver).
- * - Measures its own frame rate: thins out the grid below 50 FPS, switches itself off
+ * Hero background: a dot grid that reacts to the mouse (Canvas 2D, decorative, aria-hidden).
+ * - Started after idle by core.ts, only with a real mouse (hover + fine pointer) and
+ *   without reduced motion. Touch screens keep the static SVG dots (same look, no cost).
+ * - DPR capped at 2. The resting grid is drawn once into an offscreen layer and copied;
+ *   each frame only simulates the dots near the pointer or still moving (~100, not ~700).
+ * - The loop only runs while something moves; paused when the tab is hidden or the
+ *   hero is off-screen (IntersectionObserver).
+ * - Watches its own frame rate: thins the grid below 50 FPS, switches itself off
  *   (static SVG fallback) when it stays below 30 FPS.
- * Accent use is capped at 25% opacity, everything else is grey.
+ * Accent is capped at 25% opacity; everything else is grey.
  */
 type Pt = { ox: number; oy: number; x: number; y: number; vx: number; vy: number };
 
+const GREY = "rgba(154,154,160,0.38)";
 const setState = (s: string) => (document.documentElement.dataset.canvas = s);
 
 export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
   const area = slot.parentElement;
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-  if (!area || !ctx) {
+  const layer = document.createElement("canvas");
+  const lctx = layer.getContext("2d");
+  if (!area || !ctx || !lctx) {
     setState("off:unsupported");
     return;
   }
@@ -26,10 +32,12 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
   const R = 170;
   let pts: Pt[] = [];
   let cols = 0;
+  let rows = 0;
   let w = 0;
   let h = 0;
   let dpr = 1;
   let pointer: { x: number; y: number } | null = null;
+  const moving = new Set<number>();
   let running = false;
   let visible = true;
   let dead = false;
@@ -40,32 +48,56 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
   let slowSince = 0;
   let thinned = 0;
 
-  const build = () => {
-    const r = area.getBoundingClientRect();
+  const build = (width: number, height: number) => {
     dpr = Math.min(2, window.devicePixelRatio || 1);
-    w = r.width;
-    h = r.height;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
+    w = width;
+    h = height;
+    for (const c of [canvas, layer]) {
+      c.width = Math.round(w * dpr);
+      c.height = Math.round(h * dpr);
+    }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     pts = [];
+    moving.clear();
     cols = Math.ceil(w / spacing) + 1;
-    const rows = Math.ceil(h / spacing) + 1;
+    rows = Math.ceil(h / spacing) + 1;
+    lctx.clearRect(0, 0, w, h);
+    lctx.fillStyle = GREY;
     for (let j = 0; j < rows; j++)
       for (let i = 0; i < cols; i++) {
         const x = i * spacing + spacing / 2;
         const y = j * spacing + spacing / 2;
         pts.push({ ox: x, oy: y, x, y, vx: 0, vy: 0 });
+        lctx.fillRect(x - 1, y - 1, 2, 2);
       }
     draw();
   };
 
+  /** Indices of grid points whose resting position is within R of the pointer. */
+  const nearPointer = () => {
+    const out: number[] = [];
+    if (!pointer) return out;
+    const i0 = Math.max(0, Math.floor((pointer.x - R) / spacing));
+    const i1 = Math.min(cols - 1, Math.ceil((pointer.x + R) / spacing));
+    const j0 = Math.max(0, Math.floor((pointer.y - R) / spacing));
+    const j1 = Math.min(rows - 1, Math.ceil((pointer.y + R) / spacing));
+    for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) out.push(j * cols + i);
+    return out;
+  };
+
   const draw = () => {
     ctx.clearRect(0, 0, w, h);
-    // edges between neighbours near the pointer (accent, ≤ 25% opacity)
+    ctx.drawImage(layer, 0, 0, w, h);
+    if (!moving.size) return;
+    // remove the resting copies of the dots that are drawn elsewhere this frame
+    for (const k of moving) {
+      const p = pts[k] as Pt;
+      ctx.clearRect(p.ox - 1, p.oy - 1, 2, 2);
+    }
     if (pointer) {
       ctx.lineWidth = 1;
-      for (let k = 0; k < pts.length; k++) {
+      for (const k of moving) {
         const a = pts[k] as Pt;
         const da = Math.hypot(a.x - pointer.x, a.y - pointer.y);
         if (da > R) continue;
@@ -74,8 +106,7 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
           if (!b || (n === k + 1 && n % cols === 0)) continue;
           const db = Math.hypot(b.x - pointer.x, b.y - pointer.y);
           if (db > R) continue;
-          const alpha = 0.25 * (1 - Math.max(da, db) / R);
-          ctx.strokeStyle = `rgba(224,138,95,${alpha.toFixed(3)})`;
+          ctx.strokeStyle = `rgba(224,138,95,${(0.25 * (1 - Math.max(da, db) / R)).toFixed(3)})`;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
@@ -83,16 +114,18 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
         }
       }
     }
-    for (const p of pts) {
+    for (const k of moving) {
+      const p = pts[k] as Pt;
       const d = pointer ? Math.hypot(p.x - pointer.x, p.y - pointer.y) : Infinity;
-      ctx.fillStyle = d < R ? `rgba(224,138,95,${Math.min(0.25, 0.25 * (1 - d / R) + 0.08).toFixed(3)})` : "rgba(154,154,160,0.38)";
+      ctx.fillStyle = d < R ? `rgba(224,138,95,${Math.min(0.25, 0.25 * (1 - d / R) + 0.08).toFixed(3)})` : GREY;
       ctx.fillRect(p.x - 1, p.y - 1, 2, 2);
     }
   };
 
   const step = () => {
-    let energy = 0;
-    for (const p of pts) {
+    for (const k of nearPointer()) moving.add(k);
+    for (const k of moving) {
+      const p = pts[k] as Pt;
       if (pointer) {
         const dx = p.x - pointer.x;
         const dy = p.y - pointer.y;
@@ -107,9 +140,22 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
       p.vy = (p.vy + (p.oy - p.y) * 0.08) * 0.8;
       p.x += p.vx;
       p.y += p.vy;
-      energy += Math.abs(p.vx) + Math.abs(p.vy) + Math.abs(p.x - p.ox) + Math.abs(p.y - p.oy);
+      const resting = Math.abs(p.vx) + Math.abs(p.vy) + Math.abs(p.x - p.ox) + Math.abs(p.y - p.oy) < 0.05;
+      const near = pointer && Math.hypot(p.ox - pointer.x, p.oy - pointer.y) < R;
+      if (resting && !near) {
+        p.x = p.ox;
+        p.y = p.oy;
+        p.vx = p.vy = 0;
+        moving.delete(k);
+      }
     }
-    return energy;
+  };
+
+  const kill = (state: string) => {
+    dead = true;
+    canvas.remove();
+    if (fallback) fallback.style.opacity = "";
+    setState(state);
   };
 
   const watchdog = (now: number) => {
@@ -120,13 +166,13 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
     const fps = 1000 / (times.reduce((a, b) => a + b, 0) / times.length);
     if (fps < 30) {
       slowSince ||= now;
-      if (now - slowSince > 2000) return kill("off:slow");
+      if (now - slowSince > 2000) kill("off:slow");
     } else slowSince = 0;
-    if (fps < 50 && thinned < 3) {
+    if (!dead && fps < 50 && thinned < 3) {
       thinned++;
       spacing = Math.round(spacing * 1.3);
       times.length = 0;
-      build();
+      build(w, h);
     }
   };
 
@@ -134,9 +180,9 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
     if (dead) return;
     watchdog(now);
     if (dead) return;
-    const e = step();
+    step();
     draw();
-    if (visible && !document.hidden && (pointer || e > pts.length * 0.02)) requestAnimationFrame(frame);
+    if (visible && !document.hidden && (pointer || moving.size)) requestAnimationFrame(frame);
     else {
       running = false;
       lastT = 0;
@@ -148,21 +194,27 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
     requestAnimationFrame(frame);
   };
 
-  const kill = (state: string) => {
-    dead = true;
-    canvas.remove();
-    if (fallback) fallback.style.opacity = "";
-    setState(state);
-  };
-
-  const onMove = (e: PointerEvent) => {
+  // Page coordinates of the hero, measured once per pointer entry (not on every move).
+  let origin: { left: number; top: number } | null = null;
+  const measure = () => {
     const r = area.getBoundingClientRect();
-    pointer = { x: e.clientX - r.left, y: e.clientY - r.top };
-    wake();
+    origin = { left: r.left + window.scrollX, top: r.top + window.scrollY };
   };
-  area.addEventListener("pointermove", onMove, { passive: true });
+  area.addEventListener("pointerenter", measure, { passive: true });
+  area.addEventListener(
+    "pointermove",
+    (e) => {
+      if (e.pointerType !== "mouse") return;
+      if (!origin) measure(); // pointer was already inside when the canvas started
+      if (!origin) return;
+      pointer = { x: e.pageX - origin.left, y: e.pageY - origin.top };
+      wake();
+    },
+    { passive: true },
+  );
   area.addEventListener("pointerleave", () => {
     pointer = null;
+    origin = null;
     wake();
   });
 
@@ -176,11 +228,12 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
     setState(document.hidden ? "off:hidden" : visible ? "on" : "off:hidden");
     if (!document.hidden) wake();
   });
-  new ResizeObserver(() => {
-    if (!dead) build();
+  // ResizeObserver gives the size without forcing a layout; it also does the first build.
+  new ResizeObserver((entries) => {
+    const box = entries[0]?.contentRect;
+    if (!dead && box) build(box.width, box.height);
   }).observe(area);
 
-  build();
   if (fallback) fallback.style.opacity = "0";
   setState("on");
 }

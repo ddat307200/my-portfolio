@@ -176,7 +176,7 @@ export const consoleCopy: Record<Locale, ConsoleCopy> = {
       canvasOn: "đang chạy",
       canvasOff: {
         reduced: "tắt (giảm chuyển động)",
-        touch: "tắt (thiết bị cảm ứng yếu)",
+        touch: "tắt (màn hình cảm ứng, dùng nền tĩnh)",
         slow: "tắt (FPS < 30)",
         hidden: "tạm dừng",
         unsupported: "tắt (không hỗ trợ)",
@@ -282,7 +282,7 @@ export const consoleCopy: Record<Locale, ConsoleCopy> = {
       canvasOn: "running",
       canvasOff: {
         reduced: "off (reduced motion)",
-        touch: "off (low-power touch device)",
+        touch: "off (touch screen, static background)",
         slow: "off (FPS < 30)",
         hidden: "paused",
         unsupported: "off (not supported)",

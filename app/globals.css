@@ -204,6 +204,13 @@ html[data-boot="play"] [data-term-log]::after {
   background-position: -1px -1px;
 }
 
+/* Layout containment: text that changes often (decode effect, terminal typing)
+   only invalidates its own box, not the whole page. */
+h2:has([data-decode]),
+[data-term-log] {
+  contain: layout paint;
+}
+
 /* Terminal-style frame: border + top bar with a mono label. */
 .frame {
   border: 1px solid var(--line);
