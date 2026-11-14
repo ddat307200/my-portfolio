@@ -1,50 +1,70 @@
 {
   "measured": true,
-  "date": "2026-11-14T16:01:22.171Z",
-  "commit": "9e28c86+dirty",
+  "date": "2026-11-14T19:35:55.220Z",
+  "commit": "44adc60",
   "tool": "lighthouse@13.6.0",
   "formFactor": "mobile",
-  "runsPerRoute": 3,
+  "runsPerRoute": 5,
   "aggregate": "median",
   "routes": {
     "/vi/": {
-      "performance": 94,
+      "performance": 97,
       "accessibility": 100,
       "bestPractices": 100,
       "seo": 100,
-      "lcpMs": 907,
-      "cls": 0.002,
-      "tbtMs": 294,
+      "lcpMs": 1036,
+      "cls": 0.001,
+      "tbtMs": 199,
       "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">",
       "runs": [
+        {
+          "performance": 96,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "lcpMs": 1108,
+          "cls": 0.001,
+          "tbtMs": 226,
+          "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "lcpMs": 1036,
+          "cls": 0.001,
+          "tbtMs": 137,
+          "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
+        },
+        {
+          "performance": 97,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "lcpMs": 1142,
+          "cls": 0.001,
+          "tbtMs": 199,
+          "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
+        },
         {
           "performance": 98,
           "accessibility": 100,
           "bestPractices": 100,
           "seo": 100,
-          "lcpMs": 907,
-          "cls": 0.002,
-          "tbtMs": 178,
+          "lcpMs": 1026,
+          "cls": 0.001,
+          "tbtMs": 163,
           "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
         },
         {
-          "performance": 92,
+          "performance": 93,
           "accessibility": 100,
           "bestPractices": 100,
           "seo": 100,
-          "lcpMs": 907,
-          "cls": 0.002,
-          "tbtMs": 346,
-          "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
-        },
-        {
-          "performance": 94,
-          "accessibility": 100,
-          "bestPractices": 100,
-          "seo": 100,
-          "lcpMs": 983,
-          "cls": 0.002,
-          "tbtMs": 294,
+          "lcpMs": 1012,
+          "cls": 0.001,
+          "tbtMs": 323,
           "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
         }
       ]
@@ -54,29 +74,19 @@
       "accessibility": 100,
       "bestPractices": 100,
       "seo": 100,
-      "lcpMs": 907,
-      "cls": 0.032,
-      "tbtMs": 47,
+      "lcpMs": 995,
+      "cls": 0.03,
+      "tbtMs": 90,
       "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">",
       "runs": [
         {
-          "performance": 94,
+          "performance": 99,
           "accessibility": 100,
           "bestPractices": 100,
           "seo": 100,
-          "lcpMs": 907,
-          "cls": 0.04,
-          "tbtMs": 284,
-          "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
-        },
-        {
-          "performance": 100,
-          "accessibility": 100,
-          "bestPractices": 100,
-          "seo": 100,
-          "lcpMs": 1127,
+          "lcpMs": 995,
           "cls": 0.03,
-          "tbtMs": 46,
+          "tbtMs": 143,
           "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
         },
         {
@@ -84,9 +94,39 @@
           "accessibility": 100,
           "bestPractices": 100,
           "seo": 100,
-          "lcpMs": 906,
-          "cls": 0.032,
-          "tbtMs": 47,
+          "lcpMs": 1046,
+          "cls": 0.03,
+          "tbtMs": 79,
+          "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "lcpMs": 952,
+          "cls": 0.03,
+          "tbtMs": 50,
+          "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "lcpMs": 932,
+          "cls": 0.03,
+          "tbtMs": 113,
+          "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "lcpMs": 1035,
+          "cls": 0.03,
+          "tbtMs": 90,
           "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
         }
       ]
