@@ -2,7 +2,7 @@
 //
 // 1. Removes the Next.js/React client runtime from every HTML page.
 //    All pages are fully rendered at build time and no component needs hydration;
-//    behaviour lives in /enhance.js (lib/client/enhance.ts). Dropping the runtime
+//    behaviour lives in /js/core.js + lazy chunks (lib/client/). Dropping the runtime
 //    takes the initial JS from ~133KB to a few KB gzip (brief §8: ≤ 120KB).
 //    Kept: scripts whose id is listed in KEEP, and JSON-LD.
 // 2. Deletes the RSC payload files (__next.*.txt, index.txt): nothing fetches them
@@ -16,7 +16,7 @@ const root = join(import.meta.dirname, "..");
 const out = join(root, "out");
 if (!existsSync(out)) process.exit(0);
 
-const KEEP = ["pre-paint", "enhance", "lang-redirect", "person-jsonld"];
+const KEEP = ["pre-paint", "core", "lang-redirect", "person-jsonld"];
 const keepScript = (tag) =>
   KEEP.some((id) => tag.includes(`id="${id}"`)) || tag.includes('type="application/ld+json"');
 

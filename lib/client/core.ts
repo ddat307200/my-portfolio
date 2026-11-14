@@ -1,5 +1,7 @@
 /**
- * The only JavaScript the published site loads (bundled by scripts/build-enhance.mjs).
+ * Entry module of the published site (bundled by scripts/build-client.mjs into
+ * public/js/core.js, ES module with code splitting). Keep it small: heavy parts
+ * (terminal, canvas, telemetry, demos, diagram) are loaded later via ./lazy.
  * Every page is complete HTML without it; this script only adds behaviour:
  * - hero chat animation (scripted simulation, not a real AI),
  * - reveal on scroll (Motion `inView`) and pointer light,
@@ -7,9 +9,10 @@
  * - language switch keeps the current sub-page when it exists in both languages.
  */
 import { inView } from "motion";
+import { decode } from "./decode";
+import { prefersReducedMotion } from "./lazy";
 
 const root = document.documentElement;
-const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- Hero chat ---------- */
 
@@ -70,16 +73,18 @@ function hero() {
 /* ---------- Reveal on scroll + pointer light ---------- */
 
 function motionFx() {
+  const reduced = prefersReducedMotion();
   inView(
     "[data-reveal]",
     (el) => {
       el.classList.add("is-in");
+      if (!reduced) el.querySelectorAll<HTMLElement>("[data-decode]").forEach((d) => decode(d));
     },
     { amount: 0.15 },
   );
 
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
-  if (!finePointer || reducedMotion) return;
+  if (!finePointer || reduced) return;
 
   let frame = 0;
   let x = 0;

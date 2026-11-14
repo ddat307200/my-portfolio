@@ -8,8 +8,8 @@ import type { Locale } from "@/lib/i18n";
 export function Projects({ locale }: { locale: Locale }) {
   const t = copy[locale].projects;
   return (
-    <section id={ids.projects} aria-labelledby="projects-title" className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
-      <SectionHeading id="projects-title" index="02" eyebrow={t.eyebrow} title={t.title} />
+    <section id={ids.projects} aria-labelledby="projects-title" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <SectionHeading id="projects-title" index="05" slug="projects" title={t.title} />
       <p className="mt-4 max-w-2xl text-muted" data-reveal>
         {t.intro}
       </p>

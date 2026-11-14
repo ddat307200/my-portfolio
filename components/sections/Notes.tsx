@@ -9,8 +9,8 @@ export function Notes({ locale }: { locale: Locale }) {
   const t = copy[locale].notes;
   const notes = getNotes(locale);
   return (
-    <section id={ids.notes} aria-labelledby="notes-title" className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
-      <SectionHeading id="notes-title" index="04" eyebrow={t.eyebrow} title={t.title} />
+    <section id={ids.notes} aria-labelledby="notes-title" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <SectionHeading id="notes-title" index="07" slug="notes" title={t.title} />
       {notes.length === 0 ? (
         <p className="mt-8 rounded-2xl border border-dashed border-line p-6 text-muted" data-reveal>
           {t.empty}

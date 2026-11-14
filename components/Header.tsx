@@ -8,7 +8,7 @@ export function Header({ locale, sharedPaths }: { locale: Locale; sharedPaths: s
   const t = copy[locale];
   return (
     <header className="sticky top-0 z-40 border-b border-line/70 bg-bg/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link
           href={`/${locale}/`}
           className="font-mono text-sm tracking-tight text-fg transition-colors duration-150 hover:text-accent"

@@ -8,8 +8,8 @@ import type { Locale } from "@/lib/i18n";
 export function About({ locale }: { locale: Locale }) {
   const t = copy[locale].about;
   return (
-    <section id={ids.about} aria-labelledby="about-title" className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
-      <SectionHeading id="about-title" index="03" eyebrow={t.eyebrow} title={t.title} />
+    <section id={ids.about} aria-labelledby="about-title" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <SectionHeading id="about-title" index="06" slug="about" title={t.title} />
       <div className="mt-10 grid gap-8 md:grid-cols-[180px_1fr] md:gap-10" data-reveal>
         {/* Not the LCP image: lazy, fixed size so it causes no layout shift. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}

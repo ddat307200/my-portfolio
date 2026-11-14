@@ -63,10 +63,12 @@ export default async function LangLayout({ children, params }: LayoutProps<"/[la
     <html lang={lang} className={`${inter.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         <script id="pre-paint" dangerouslySetInnerHTML={{ __html: headScript }} />
-        {/* The only script the published site loads (see lib/client/enhance.ts). */}
-        <script id="enhance" src={asset("/enhance.js")} defer />
+        {/* Entry module; heavier parts are lazy chunks it imports later (lib/client/).
+            type="module" is deferred by the browser (runs after parsing), so it is not render-blocking. */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script id="core" type="module" src={asset("/js/core.js")} />
       </head>
-      <body>
+      <body className="bg-grid">
         <a href="#main" className="skip-link">
           {t.skip}
         </a>

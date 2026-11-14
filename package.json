@@ -5,14 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/check-placeholders.mjs && node scripts/build-enhance.mjs",
+    "prebuild": "node scripts/check-placeholders.mjs && node scripts/build-client.mjs",
     "build": "next build --webpack",
     "postbuild": "node scripts/postbuild.mjs",
     "start": "node scripts/serve.mjs",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "size": "node scripts/js-size.mjs",
-    "predev": "node scripts/build-enhance.mjs"
+    "predev": "node scripts/build-client.mjs"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",

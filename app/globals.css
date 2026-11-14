@@ -12,6 +12,10 @@
   --accent-hover: #eba07a;
   --mx: 50%;
   --my: 30%;
+  /* V2 tokens. Still one accent colour; --ok is only for small "ok/online" dots. */
+  --grid: rgba(255, 255, 255, 0.035);
+  --grid-size: 48px;
+  --ok: #3fb950;
   color-scheme: dark;
 }
 
@@ -218,6 +222,80 @@ html[data-hero="play"] [data-hero-final],
 html[data-hero="play"] [data-hero-chips],
 [data-chat]:not([data-phase="done"]) [data-hero-chips] {
   opacity: 0;
+}
+
+/* ---------- V2: engineering-console look ---------- */
+
+/* 1px grid background. */
+.bg-grid {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: -1px -1px;
+}
+
+/* Terminal-style frame: border + top bar with a mono label. */
+.frame {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border-radius: 10px;
+}
+.frame-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--line);
+  padding: 0.45rem 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Measuring rule: hairline with tick marks every 8px, taller every 64px. */
+.ruler {
+  height: 9px;
+  background-image:
+    linear-gradient(90deg, var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--muted) 1px, transparent 1px),
+    linear-gradient(var(--line), var(--line));
+  background-size:
+    8px 4px,
+    64px 9px,
+    100% 1px;
+  background-repeat: repeat-x;
+  background-position:
+    0 100%,
+    0 100%,
+    0 100%;
+  opacity: 0.8;
+}
+
+/* Small status dot (green only here). */
+.dot-ok {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ok);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 18%, transparent);
+}
+
+/* Static fallback for the hero canvas: dot grid (SVG), shown when the canvas is off. */
+.hero-dots {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='1' cy='1' r='1' fill='%239a9aa0' fill-opacity='.22'/%3E%3C/svg%3E");
+  background-size: 32px 32px;
+  -webkit-mask-image: radial-gradient(ellipse at 60% 40%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse at 60% 40%, #000 30%, transparent 75%);
+}
+
+/* Things that only make sense with JS are hidden without it (html.js is set in <head>). */
+html:not(.js) .js-only {
+  display: none !important;
+}
+html.js .nojs-only {
+  display: none !important;
 }
 
 /* Rendered Markdown (notes). */

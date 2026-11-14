@@ -4,4 +4,4 @@ out/
 *.tsbuildinfo
 next-env.d.ts
 .lighthouse/
-public/enhance.js
+public/js/

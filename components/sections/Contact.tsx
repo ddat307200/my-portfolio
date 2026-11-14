@@ -12,8 +12,8 @@ const link = "text-fg underline-offset-4 transition-colors duration-150 hover:te
 export function Contact({ locale }: { locale: Locale }) {
   const t = copy[locale].contact;
   return (
-    <section id={ids.contact} aria-labelledby="contact-title" className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
-      <SectionHeading id="contact-title" index="05" eyebrow={t.eyebrow} title={t.title} />
+    <section id={ids.contact} aria-labelledby="contact-title" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <SectionHeading id="contact-title" index="08" slug="contact" title={t.title} />
       <p className="mt-4 max-w-2xl text-muted" data-reveal>
         {t.body}
       </p>
