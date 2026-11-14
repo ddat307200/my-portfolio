@@ -76,7 +76,7 @@ CHROME_PATH=... node scripts/measure-fps.mjs
 CHROME_PATH=... node scripts/measure-inp.mjs
 ```
 
-Đo FPS thật (rAF) và INP của trang production dưới CPU giả lập 4x bằng Chrome DevTools Protocol.
+Đo FPS thật (rAF) và INP của trang production dưới CPU giả lập 4x bằng Chrome DevTools Protocol. Với INP dùng `HEADFUL=1` (xem phần kết quả).
 
 ### Cách trang chạy JavaScript
 
@@ -187,10 +187,10 @@ Lighthouse 13.6.0 **mobile** (4G giả lập + CPU 4x), Chrome headless, trung v
 
 - JS (`npm run size`, gzip): lần đầu **2,6KB**, tổng sau khi nạp hết chunk **22,9KB** (ngân sách: ≤ 120KB lần đầu, ≤ 300KB tổng). Phần tử LCP là đoạn chữ hero, không phải canvas.
 - FPS đo bằng rAF dưới CPU 4x (headless, máy dev, 5 giây rê chuột): desktop 71,2; mobile 360px 71,7 (canvas tắt trên cảm ứng, dùng nền tĩnh).
-- **INP: chưa đạt ngân sách trong phép đo tổng hợp.** Kịch bản robot dưới CPU 4x cho khoảng 500ms trên desktop (70–100ms mobile). Trace không thấy việc nặng trên luồng chính (tác vụ lớn nhất 68ms), nên phần trễ nằm ở khâu dựng khung hình của Chrome headless; **chưa đo trên thiết bị thật**.
+- **INP** (≤ 200ms), đo bằng Chrome có cửa sổ thật dưới CPU 4x, kịch bản gõ lệnh terminal + chạy hai demo + mở bảng lệnh, 3 lần: desktop **80–96ms**, mobile 360px **48–72ms** (`HEADFUL=1 node scripts/measure-inp.mjs`). **Đừng đo INP bằng headless**: cùng kịch bản cho 344–500ms vì headless trễ dựng khung hình (kiểm chứng: trace không có tác vụ nào trên 14ms ở bất kỳ luồng nào; cùng lần bấm là 40ms ở Chrome thật).
 - Style & Layout vẫn khoảng 0,8–1,0 giây trên luồng chính trong Lighthouse (trước khoảng 1,1 giây).
 - Đã kiểm tra: bàn phím (menu mobile, Esc, Ctrl/Cmd+K, vòng focus 3px), `prefers-reduced-motion`, không JavaScript, 360/1280px không tràn ngang, console không lỗi, không còn chữ dưới 12px, anchor nhảy đúng chỗ.
-- **Chưa kiểm tra:** điện thoại thật, Mac thật (nhãn `⌘K` mới giả lập), trình đọc màn hình thật.
+- **Chưa kiểm tra:** điện thoại thật (CPU 4x chỉ là giả lập), Mac thật (nhãn `⌘K` mới giả lập), trình đọc màn hình thật.
 
 ## Cấu trúc
 

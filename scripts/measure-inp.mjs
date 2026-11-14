@@ -4,12 +4,17 @@
 // Actions are spaced 300ms apart (a fast human); back-to-back robot clicks a few ms
 // apart would mostly measure the previous click's work, not this one.
 //
+// IMPORTANT: use HEADFUL=1 (a real Chrome window with real vsync/GPU compositing).
+// Headless Chrome stalls frame production for ~350-500ms in this flow (measured: zero
+// main-thread/GPU work in that window, 40ms vs 344ms for the same click), which shows up
+// as a fake "presentation delay" and inflates INP.
+//
 // Usage: npm run start  (other terminal)  then:
-//   CHROME_PATH=... node scripts/measure-inp.mjs [url]
+//   HEADFUL=1 CHROME_PATH=... node scripts/measure-inp.mjs [url]
 import puppeteer from "puppeteer-core";
 
 const url = process.argv[2] ?? "http://localhost:4173/vi/";
-const browser = await puppeteer.launch({ executablePath: process.env.CHROME_PATH, headless: true });
+const browser = await puppeteer.launch({ executablePath: process.env.CHROME_PATH, headless: !process.env.HEADFUL, args: ["--window-size=1300,900"] });
 const results = [];
 for (const c of [
   { name: "desktop 1280x800, CPU 4x", vp: { width: 1280, height: 800 } },
