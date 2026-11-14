@@ -4,7 +4,7 @@
  *   without reduced motion. Touch screens keep the static SVG dots (same look, no cost).
  * - DPR capped at 2. The resting grid is drawn once into an offscreen layer and copied;
  *   each frame only simulates the dots near the pointer or still moving (~100, not ~700).
- * - The loop only runs while something moves; paused when the tab is hidden or the
+ * - The loop only runs while dots are moving (a resting mouse costs nothing); paused when the tab is hidden or the
  *   hero is off-screen (IntersectionObserver).
  * - Watches its own frame rate: thins the grid below 50 FPS, switches itself off
  *   (static SVG fallback) when it stays below 30 FPS.
@@ -122,7 +122,9 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
     }
   };
 
+  /** Advances the simulation; returns the largest speed (0 = everything settled). */
   const step = () => {
+    let maxV = 0;
     for (const k of nearPointer()) moving.add(k);
     for (const k of moving) {
       const p = pts[k] as Pt;
@@ -140,6 +142,7 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
       p.vy = (p.vy + (p.oy - p.y) * 0.08) * 0.8;
       p.x += p.vx;
       p.y += p.vy;
+      maxV = Math.max(maxV, Math.abs(p.vx) + Math.abs(p.vy));
       const resting = Math.abs(p.vx) + Math.abs(p.vy) + Math.abs(p.x - p.ox) + Math.abs(p.y - p.oy) < 0.05;
       const near = pointer && Math.hypot(p.ox - pointer.x, p.oy - pointer.y) < R;
       if (resting && !near) {
@@ -149,6 +152,7 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
         moving.delete(k);
       }
     }
+    return maxV;
   };
 
   const kill = (state: string) => {
@@ -180,9 +184,10 @@ export function mountCanvas(slot: HTMLElement, fallback: HTMLElement | null) {
     if (dead) return;
     watchdog(now);
     if (dead) return;
-    step();
+    const speed = step();
     draw();
-    if (visible && !document.hidden && (pointer || moving.size)) requestAnimationFrame(frame);
+    // Keep animating only while dots are still moving; a resting mouse costs nothing.
+    if (visible && !document.hidden && speed > 0.02) requestAnimationFrame(frame);
     else {
       running = false;
       lastT = 0;

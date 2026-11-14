@@ -4,18 +4,30 @@ import { demoCopy } from "@/content/demos";
 import { ids } from "@/content/ids";
 import type { Locale } from "@/lib/i18n";
 
-/** Inline-SVG connector with a dashed "data flow" (CSS animation, off with reduced motion). */
+/**
+ * Inline-SVG connector. The static line is one SVG; the moving dashes are a second SVG
+ * that slides by one dash period with a CSS transform (compositor-only, no repaint per
+ * frame). Stopped with reduced motion.
+ */
 function Connector() {
   return (
     <>
-      <svg aria-hidden="true" className="mx-auto h-8 w-4 lg:hidden" viewBox="0 0 16 32" preserveAspectRatio="none">
-        <line x1="8" y1="0" x2="8" y2="32" className="flow-base" />
-        <line x1="8" y1="0" x2="8" y2="32" className="flow-dash" />
-      </svg>
-      <svg aria-hidden="true" className="hidden h-4 w-full self-center lg:block" viewBox="0 0 40 16" preserveAspectRatio="none">
-        <line x1="0" y1="8" x2="40" y2="8" className="flow-base" />
-        <line x1="0" y1="8" x2="40" y2="8" className="flow-dash" />
-      </svg>
+      <span aria-hidden="true" className="flow mx-auto h-8 w-4 lg:hidden">
+        <svg className="absolute inset-0 h-full w-full">
+          <line x1="8" y1="0" x2="8" y2="100%" className="flow-base" />
+        </svg>
+        <svg className="flow-move-y">
+          <line x1="8" y1="0" x2="8" y2="100%" className="flow-dash" />
+        </svg>
+      </span>
+      <span aria-hidden="true" className="flow hidden h-4 w-full self-center lg:block">
+        <svg className="absolute inset-0 h-full w-full">
+          <line x1="0" y1="8" x2="100%" y2="8" className="flow-base" />
+        </svg>
+        <svg className="flow-move-x">
+          <line x1="0" y1="8" x2="100%" y2="8" className="flow-dash" />
+        </svg>
+      </span>
     </>
   );
 }

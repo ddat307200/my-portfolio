@@ -1,18 +1,18 @@
 {
   "measured": true,
-  "date": "2026-11-14T15:00:00.898Z",
-  "commit": "c999405",
+  "date": "2026-11-14T15:32:21.653Z",
+  "commit": "1325236+dirty",
   "tool": "lighthouse@13.6.0",
   "formFactor": "mobile",
   "routes": {
     "/vi/": {
-      "performance": 99,
+      "performance": 91,
       "accessibility": 100,
       "bestPractices": 100,
       "seo": 100,
-      "lcpMs": 1168,
+      "lcpMs": 909,
       "cls": 0.001,
-      "tbtMs": 136,
+      "tbtMs": 392,
       "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
     },
     "/en/": {
@@ -20,9 +20,9 @@
       "accessibility": 100,
       "bestPractices": 100,
       "seo": 100,
-      "lcpMs": 906,
-      "cls": 0.032,
-      "tbtMs": 18,
+      "lcpMs": 1151,
+      "cls": 0.03,
+      "tbtMs": 82,
       "lcpElement": "<p class=\"mt-3 max-w-xl text-muted\">"
     }
   }

@@ -37,6 +37,20 @@ function table(head: string[], rows: (string | number)[][], caption: string) {
   return wrap;
 }
 
+/**
+ * Yield to the browser so the click paints immediately (low INP), then do the
+ * heavier DOM work right after that frame.
+ */
+function afterPaint(out: HTMLElement, fn: () => void) {
+  out.setAttribute("aria-busy", "true");
+  requestAnimationFrame(() =>
+    setTimeout(() => {
+      fn();
+      out.removeAttribute("aria-busy");
+    }, 0),
+  );
+}
+
 const errorBox = (msg: string) => {
   const p = el("p", "rounded-lg border border-accent/60 bg-accent/10 px-3 py-2 text-[14px] text-fg", msg);
   p.setAttribute("role", "alert");
@@ -52,7 +66,8 @@ export function mountDemos(root: HTMLElement) {
   const xin = q<HTMLTextAreaElement>("[data-extract-in]");
   const xout = q<HTMLElement>("[data-extract-out]");
   if (xin && xout) {
-    const runExtract = () => {
+    const runExtract = () => afterPaint(xout, renderExtract);
+    const renderExtract = () => {
       xout.replaceChildren();
       if (!xin.value.trim()) return void xout.append(errorBox(t.errors.empty));
       const res = extractOrders(xin.value);
@@ -82,12 +97,18 @@ export function mountDemos(root: HTMLElement) {
       }
       const det = el("details", "mt-4");
       det.append(el("summary", "cursor-pointer font-mono text-[13px] text-muted", t.extract.json));
-      det.append(
-        el(
-          "pre",
-          "mt-2 max-h-64 overflow-auto rounded-lg border border-line bg-bg p-3 font-mono text-[12.5px]",
-          JSON.stringify(res, null, 2),
-        ),
+      // Built only when opened: keeps the "Extract" click cheap on slow devices.
+      det.addEventListener(
+        "toggle",
+        () =>
+          det.append(
+            el(
+              "pre",
+              "mt-2 max-h-64 overflow-auto rounded-lg border border-line bg-bg p-3 font-mono text-[12.5px]",
+              JSON.stringify(res, null, 2),
+            ),
+          ),
+        { once: true },
       );
       xout.append(det);
     };
@@ -114,7 +135,8 @@ export function mountDemos(root: HTMLElement) {
   if (ain && bin && rout && dl) {
     let last: ReconcileResult | null = null;
     const r = t.reconcile;
-    const runReconcile = () => {
+    const runReconcile = () => afterPaint(rout, renderReconcile);
+    const renderReconcile = () => {
       rout.replaceChildren();
       last = null;
       dl.disabled = true;

@@ -195,8 +195,14 @@ html[data-boot="play"] [data-term-log]::after {
 
 /* ---------- V2: engineering-console look ---------- */
 
-/* 1px grid background. */
-.bg-grid {
+/* 1px grid background on a fixed layer of its own: the compositor keeps it, so
+   content changes above it don't repaint a page-sized background (cheaper INP). */
+.bg-grid::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image:
     linear-gradient(var(--grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid) 1px, transparent 1px);
@@ -207,7 +213,15 @@ html[data-boot="play"] [data-term-log]::after {
 /* Layout containment: text that changes often (decode effect, terminal typing)
    only invalidates its own box, not the whole page. */
 h2:has([data-decode]),
-[data-term-log] {
+[data-term-log],
+[data-extract-out],
+[data-reconcile-out] {
+  contain: layout paint;
+}
+/* Each section below the hero is its own layout/paint island: inserting a result
+   table in [03] run/ does not re-lay-out the rest of the page (keeps INP low).
+   Sections have padding, so focus rings near their edges are not clipped. */
+main > section:not(:first-child) {
   contain: layout paint;
 }
 
@@ -275,11 +289,16 @@ h2:has([data-decode]),
   transition: opacity 400ms ease;
 }
 
-/* Architecture diagram: connectors with a moving dash ("data flow"). */
+/* Architecture diagram: connectors with a moving dash ("data flow").
+   The dashed SVG slides by one dash period (13px) using transform, which the
+   compositor animates without repainting. */
+.flow {
+  position: relative;
+  overflow: hidden;
+}
 .flow-base,
 .flow-dash {
   stroke-width: 2;
-  vector-effect: non-scaling-stroke;
 }
 .flow-base {
   stroke: var(--line);
@@ -288,17 +307,41 @@ h2:has([data-decode]),
   stroke: var(--accent);
   stroke-opacity: 0.85;
   stroke-dasharray: 4 9;
-  animation: flow 1.1s linear infinite;
 }
-@keyframes flow {
+.flow-move-x,
+.flow-move-y {
+  position: absolute;
+  will-change: transform;
+}
+.flow-move-x {
+  top: 0;
+  left: -13px;
+  width: calc(100% + 13px);
+  height: 100%;
+  animation: flow-x 1.1s linear infinite;
+}
+.flow-move-y {
+  left: 0;
+  top: -13px;
+  width: 100%;
+  height: calc(100% + 13px);
+  animation: flow-y 1.1s linear infinite;
+}
+@keyframes flow-x {
   to {
-    stroke-dashoffset: -13;
+    transform: translateX(13px);
+  }
+}
+@keyframes flow-y {
+  to {
+    transform: translateY(13px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .flow-dash {
+  .flow-move-x,
+  .flow-move-y {
     animation: none;
-    stroke-opacity: 0.5;
+    opacity: 0.5;
   }
 }
 /* With JS one detail is shown at a time; without JS all of them are listed. */
