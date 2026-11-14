@@ -1,0 +1,27 @@
+{
+  "measured": true,
+  "date": "2026-11-14T14:58:28.778Z",
+  "commit": "31a6184",
+  "tool": "lighthouse@13.6.0",
+  "formFactor": "mobile",
+  "routes": {
+    "/vi/": {
+      "performance": 98,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "lcpMs": 1154,
+      "cls": 0.001,
+      "tbtMs": 145
+    },
+    "/en/": {
+      "performance": 100,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "lcpMs": 1124,
+      "cls": 0.03,
+      "tbtMs": 0
+    }
+  }
+}

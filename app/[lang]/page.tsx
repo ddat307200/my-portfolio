@@ -5,6 +5,7 @@ import { Contact } from "@/components/sections/Contact";
 import { Notes } from "@/components/sections/Notes";
 import { Projects } from "@/components/sections/Projects";
 import { Services } from "@/components/sections/Services";
+import { Telemetry } from "@/components/sections/Telemetry";
 import { githubUrl, profile, site, siteUrl } from "@/content/site";
 import { isLocale } from "@/lib/i18n";
 
@@ -32,6 +33,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(person).replace(/</g, "\\u003c") }}
       />
       <Hero locale={lang} />
+      <Telemetry locale={lang} />
       <Services locale={lang} />
       <Projects locale={lang} />
       <About locale={lang} />

@@ -7,10 +7,15 @@
 //    Kept: scripts whose id is listed in KEEP, and JSON-LD.
 // 2. Deletes the RSC payload files (__next.*.txt, index.txt): nothing fetches them
 //    once the client router is gone.
-// 3. Writes .nojekyll (GitHub Pages) and, when no basePath is used, CNAME with the
+// 3. Writes build-info.json (read by the telemetry panel): git commit, build time,
+//    gzip JS per route (scripts/js-size.mjs) and the latest Lighthouse run from
+//    content/lighthouse.json. Values are measured; nothing is filled in by hand.
+// 4. Writes .nojekyll (GitHub Pages) and, when no basePath is used, CNAME with the
 //    domain from content/site.ts.
 import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, rmSync } from "node:fs";
 import { join } from "node:path";
+import { execSync } from "node:child_process";
+import { measure } from "./js-size.mjs";
 
 const root = join(import.meta.dirname, "..");
 const out = join(root, "out");
@@ -58,6 +63,25 @@ walk(out);
 process.stdout.write(
   `[postbuild] ${pages} page(s): removed ${removedScripts} runtime script(s), ${removedFiles} RSC file(s)\n`,
 );
+
+const git = (cmd) => {
+  try {
+    return execSync(`git ${cmd}`, { cwd: root, stdio: ["ignore", "pipe", "ignore"] }).toString().trim();
+  } catch {
+    return "";
+  }
+};
+const lighthouse = JSON.parse(readFileSync(join(root, "content", "lighthouse.json"), "utf8"));
+const info = {
+  commit: git("rev-parse --short HEAD") || "unknown",
+  dirty: git("status --porcelain --untracked-files=no") !== "",
+  builtAt: new Date().toISOString(),
+  routes: measure(out),
+  lighthouse,
+};
+writeFileSync(join(out, "build-info.json"), JSON.stringify(info, null, 2));
+process.stdout.write(`[postbuild] build-info.json: ${info.commit}${info.dirty ? "+dirty" : ""}, lighthouse ${lighthouse.measured ? "measured" : "not measured"}
+`);
 
 writeFileSync(join(out, ".nojekyll"), "");
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";

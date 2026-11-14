@@ -120,7 +120,16 @@ function terminal() {
   if (!el) return;
   const boot = document.documentElement.dataset.boot === "play";
   whenIdle(() => {
-    void import("./terminal").then((m) => m.mountTerminal(el, { boot }));
+    void Promise.all([import("./terminal"), import("./buildinfo")]).then(([m, b]) => {
+      void b.loadBuildInfo();
+      m.mountTerminal(el, {
+        boot,
+        build: () => {
+          const info = b.buildInfo();
+          return info ? { commit: info.commit, builtAt: new Date(info.builtAt).toISOString().slice(0, 16).replace("T", " ") } : undefined;
+        },
+      });
+    });
   }, 1500);
 }
 
@@ -138,8 +147,34 @@ function palette() {
   });
 }
 
+function telemetry() {
+  const el = document.querySelector<HTMLElement>("[data-telemetry]");
+  if (!el) return;
+  whenIdle(() => void import("./telemetry").then((m) => m.mountTelemetry(el)), 2000);
+}
+
+/** Decide here (not in the chunk) so the reason is known even when the canvas never loads. */
+function canvasBg() {
+  const slot = document.querySelector<HTMLElement>("[data-canvas-slot]");
+  if (!slot) return;
+  const root = document.documentElement;
+  if (prefersReducedMotion()) return void (root.dataset.canvas = "off:reduced");
+  const nav = navigator as Navigator & { deviceMemory?: number };
+  const coarse = matchMedia("(pointer: coarse)").matches;
+  const weak = (navigator.hardwareConcurrency ?? 2) <= 4 || (nav.deviceMemory ?? 8) <= 4;
+  if (coarse && weak) return void (root.dataset.canvas = "off:touch");
+  if (!document.createElement("canvas").getContext) return void (root.dataset.canvas = "off:unsupported");
+  whenIdle(() => {
+    void import("./canvas").then((m) =>
+      m.mountCanvas(slot, document.querySelector<HTMLElement>("[data-hero-fallback]")),
+    );
+  }, 3000);
+}
+
 motionFx();
 copyEmail();
 langSwitch();
 palette();
 terminal();
+telemetry();
+canvasBg();

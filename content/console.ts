@@ -43,6 +43,36 @@ type ConsoleCopy = {
     langUsage: string;
     langSwitching: string;
   };
+  telemetry: {
+    title: string;
+    lead: string;
+    frame: string;
+    live: string;
+    build: string;
+    nojs: string;
+    notMeasured: string;
+    unsupported: string;
+    noInteraction: string;
+    loading: string;
+    fps: string;
+    viewport: string;
+    dpr: string;
+    cores: string;
+    lcp: string;
+    cls: string;
+    inp: string;
+    jsLoaded: string;
+    canvas: string;
+    commit: string;
+    builtAt: string;
+    jsInitial: string;
+    jsTotal: string;
+    lighthouse: string;
+    lhNote: string;
+    canvasOn: string;
+    canvasOff: Record<"reduced" | "touch" | "slow" | "hidden" | "unsupported", string>;
+    honesty: string;
+  };
   palette: {
     open: string;
     title: string;
@@ -117,6 +147,42 @@ export const consoleCopy: Record<Locale, ConsoleCopy> = {
       langUsage: "cách dùng: lang vi | lang en",
       langSwitching: "đang chuyển ngôn ngữ…",
     },
+    telemetry: {
+      title: "Đo đạc trực tiếp của chính trang này",
+      lead: "Các số dưới đây đo trong trình duyệt của bạn (live) hoặc ghi lúc build (build). Không có số ước lượng: chưa đo thì ghi chưa đo.",
+      frame: "telemetry.live",
+      live: "live",
+      build: "build",
+      nojs: "Cần JavaScript để đo trực tiếp. Phần còn lại của trang không cần.",
+      notMeasured: "chưa đo",
+      unsupported: "không hỗ trợ",
+      noInteraction: "chưa có tương tác",
+      loading: "đang đo…",
+      fps: "FPS",
+      viewport: "viewport",
+      dpr: "devicePixelRatio",
+      cores: "số lõi CPU",
+      lcp: "LCP",
+      cls: "CLS",
+      inp: "INP",
+      jsLoaded: "JS đã tải",
+      canvas: "canvas nền",
+      commit: "commit",
+      builtAt: "thời điểm build",
+      jsInitial: "JS lần đầu (gzip)",
+      jsTotal: "JS tổng (gzip)",
+      lighthouse: "Lighthouse mobile",
+      lhNote: "lần chạy gần nhất",
+      canvasOn: "đang chạy",
+      canvasOff: {
+        reduced: "tắt (giảm chuyển động)",
+        touch: "tắt (thiết bị cảm ứng yếu)",
+        slow: "tắt (FPS < 30)",
+        hidden: "tạm dừng",
+        unsupported: "tắt (không hỗ trợ)",
+      },
+      honesty: "Không có uptime, lượt truy cập hay số request: trang tĩnh này không thu thập dữ liệu nào.",
+    },
     palette: {
       open: "Mở bảng lệnh",
       title: "Bảng lệnh",
@@ -186,6 +252,42 @@ export const consoleCopy: Record<Locale, ConsoleCopy> = {
       opened: (s) => `→ scrolled to ${s}/`,
       langUsage: "usage: lang vi | lang en",
       langSwitching: "switching language…",
+    },
+    telemetry: {
+      title: "Live measurements of this very page",
+      lead: "Numbers below are measured in your browser (live) or written at build time (build). Nothing is estimated: if it wasn't measured, it says so.",
+      frame: "telemetry.live",
+      live: "live",
+      build: "build",
+      nojs: "Live measurements need JavaScript. The rest of the page doesn't.",
+      notMeasured: "not measured",
+      unsupported: "not supported",
+      noInteraction: "no interaction yet",
+      loading: "measuring…",
+      fps: "FPS",
+      viewport: "viewport",
+      dpr: "devicePixelRatio",
+      cores: "CPU cores",
+      lcp: "LCP",
+      cls: "CLS",
+      inp: "INP",
+      jsLoaded: "JS loaded",
+      canvas: "background canvas",
+      commit: "commit",
+      builtAt: "built at",
+      jsInitial: "initial JS (gzip)",
+      jsTotal: "total JS (gzip)",
+      lighthouse: "Lighthouse mobile",
+      lhNote: "latest run",
+      canvasOn: "running",
+      canvasOff: {
+        reduced: "off (reduced motion)",
+        touch: "off (low-power touch device)",
+        slow: "off (FPS < 30)",
+        hidden: "paused",
+        unsupported: "off (not supported)",
+      },
+      honesty: "No uptime, visitor counts or request numbers: this static page collects no data.",
     },
     palette: {
       open: "Open command palette",
