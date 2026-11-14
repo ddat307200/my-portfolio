@@ -144,20 +144,6 @@ body {
   }
 }
 
-/* Hero chat (§4). Thinking sparkle + shimmer text. */
-@keyframes spin-slow {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes shimmer {
-  from {
-    background-position: 150% 0;
-  }
-  to {
-    background-position: -50% 0;
-  }
-}
 @keyframes blink {
   50% {
     opacity: 0;
@@ -173,19 +159,6 @@ body {
     transform: none;
   }
 }
-
-.sparkle-spin {
-  display: inline-block;
-  animation: spin-slow 2.4s linear infinite;
-}
-.shimmer-text {
-  background: linear-gradient(90deg, var(--muted) 0%, var(--muted) 35%, var(--fg) 50%, var(--muted) 65%, var(--muted) 100%);
-  background-size: 250% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmer 1.6s linear infinite;
-}
 .caret {
   display: inline-block;
   width: 0.5em;
@@ -199,29 +172,25 @@ body {
   animation: fade-up 300ms ease-out both;
 }
 
-/* Hero phases. The HTML ships with data-phase="done" (finished state).
-   Before enhance.js runs, the inline head script may set html[data-hero="play"]
-   to hide the answer so it doesn't flash; without JS or with reduced motion it
-   is never set. The final answer keeps its space (no layout shift) and stays in
-   the accessibility tree; the thinking/stream layers are aria-hidden. */
-[data-hero-thinking],
-[data-hero-stream] {
-  display: none;
-}
-[data-chat][data-phase="thinking"] [data-hero-thinking],
-[data-chat][data-phase="stream"] [data-hero-stream] {
-  display: block;
-}
-[data-chat][data-phase="thinking"] [data-hero-spark] {
-  animation: spin-slow 2.4s linear infinite;
-}
-html[data-hero="play"] [data-hero-final],
-[data-chat]:not([data-phase="done"]) [data-hero-final] {
-  color: transparent;
-}
-html[data-hero="play"] [data-hero-chips],
-[data-chat]:not([data-phase="done"]) [data-hero-chips] {
+/* Terminal boot: until terminal.ts takes over, hide the static transcript (it is
+   replayed) and show "booting…". Without JS / with reduced motion the flag is never set. */
+html[data-boot="play"] [data-term-static] {
   opacity: 0;
+}
+html[data-boot="play"] [data-term-log]::before {
+  content: attr(data-booting);
+  color: var(--muted);
+  position: absolute;
+}
+html[data-boot="play"] [data-term-log]::after {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 1.1em;
+  background: var(--accent);
+  animation: blink 1s steps(1) infinite;
+  position: absolute;
+  margin-top: 1.7em;
 }
 
 /* ---------- V2: engineering-console look ---------- */

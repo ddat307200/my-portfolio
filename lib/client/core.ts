@@ -10,65 +10,8 @@
  */
 import { inView } from "motion";
 import { decode } from "./decode";
-import { prefersReducedMotion } from "./lazy";
+import { prefersReducedMotion, whenIdle } from "./lazy";
 
-const root = document.documentElement;
-
-/* ---------- Hero chat ---------- */
-
-function hero() {
-  const box = document.querySelector<HTMLElement>("[data-chat]");
-  if (!box || root.dataset.hero !== "play") return;
-
-  const answer = box.querySelector<HTMLElement>("[data-hero-stream]")?.dataset.text ?? "";
-  const streamText = box.querySelector<HTMLElement>("[data-hero-stream-text]");
-  const chips = box.querySelector<HTMLElement>("[data-hero-chips]");
-  const skip = box.querySelector<HTMLButtonElement>("[data-hero-skip]");
-  if (!streamText || !chips || !skip || !answer) {
-    delete root.dataset.hero;
-    return;
-  }
-
-  const words = answer.split(" ");
-  const timers: number[] = [];
-  const at = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
-  const rand = (min: number, max: number) => min + Math.random() * (max - min);
-
-  // Hand over from the pre-paint CSS hook to the component state.
-  box.dataset.phase = "idle";
-  chips.inert = true;
-  skip.hidden = false;
-  delete root.dataset.hero;
-
-  const finish = (moveFocus: boolean) => {
-    timers.forEach((id) => window.clearTimeout(id));
-    box.dataset.phase = "done";
-    chips.inert = false;
-    chips.classList.add("fade-up");
-    skip.hidden = true;
-    try {
-      sessionStorage.setItem("hero-played", "1");
-    } catch {
-      /* storage blocked: the animation may play again next time */
-    }
-    if (moveFocus) chips.querySelector("a")?.focus();
-  };
-
-  skip.addEventListener("click", () => finish(true));
-
-  let time = 350;
-  at(time, () => (box.dataset.phase = "thinking"));
-  time += rand(800, 1100);
-  at(time, () => {
-    streamText.textContent = "";
-    box.dataset.phase = "stream";
-  });
-  for (let i = 1; i <= words.length; i++) {
-    time += rand(25, 45);
-    at(time, () => (streamText.textContent = words.slice(0, i).join(" ")));
-  }
-  at(time + 120, () => finish(false));
-}
 
 /* ---------- Reveal on scroll + pointer light ---------- */
 
@@ -170,7 +113,33 @@ function langSwitch() {
   if (shared.includes(norm)) link.href = `${base}/${to}${norm}`;
 }
 
-hero();
+/* ---------- Lazy parts ---------- */
+
+function terminal() {
+  const el = document.querySelector<HTMLElement>("[data-term]");
+  if (!el) return;
+  const boot = document.documentElement.dataset.boot === "play";
+  whenIdle(() => {
+    void import("./terminal").then((m) => m.mountTerminal(el, { boot }));
+  }, 1500);
+}
+
+function palette() {
+  const open = (from?: HTMLElement | null) => void import("./palette").then((m) => m.openPalette(from));
+  window.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      open();
+    }
+  });
+  document.querySelectorAll<HTMLButtonElement>("[data-palette-open]").forEach((b) => {
+    b.hidden = false;
+    b.addEventListener("click", () => open(b));
+  });
+}
+
 motionFx();
 copyEmail();
 langSwitch();
+palette();
+terminal();

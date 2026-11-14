@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { consoleCopy } from "@/content/console";
 import { copy } from "@/content/copy";
 import { site } from "@/content/site";
 import type { Locale } from "@/lib/i18n";
@@ -25,13 +26,24 @@ export function Header({ locale, sharedPaths }: { locale: Locale; sharedPaths: s
               <li key={item.id}>
                 <Link
                   href={`/${locale}/#${item.id}`}
-                  className="rounded-lg px-3 py-2 text-sm text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
+                  className="rounded-lg px-2.5 py-2 font-mono text-[13px] text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
                 >
                   {item.label}
                 </Link>
               </li>
             ))}
           </ul>
+          {/* Shown by core.js (needs JS); opens the Ctrl/Cmd+K palette. */}
+          <button
+            type="button"
+            hidden
+            data-palette-open
+            aria-keyshortcuts="Control+K Meta+K"
+            aria-label={consoleCopy[locale].palette.open}
+            className="inline-flex h-9 items-center gap-1 rounded-lg border border-line px-2.5 font-mono text-xs text-muted transition-colors duration-150 hover:border-muted hover:bg-surface-2 hover:text-fg"
+          >
+            <span aria-hidden="true">⌘K</span>
+          </button>
           <LangSwitch locale={locale} label={t.langSwitch.label} short={t.langSwitch.short} sharedPaths={sharedPaths} />
           <Link
             href={`/${locale}/#contact`}

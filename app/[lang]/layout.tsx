@@ -50,9 +50,9 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
 }
 
 // Runs before first paint: marks JS as available and decides whether the hero
-// should animate (not with reduced motion, and only once per browser session).
-// Safety net: if the app never takes over, the final text is revealed after 6s.
-const headScript = `(function(){var d=document.documentElement;d.classList.add('js');try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('hero-played')){d.setAttribute('data-hero','play');setTimeout(function(){d.removeAttribute('data-hero')},6000)}}catch(e){}})();`;
+// terminal should replay its boot sequence (not with reduced motion, once per session).
+// Safety net: if the app never takes over, the static transcript is revealed after 7s.
+const headScript = `(function(){var d=document.documentElement;d.classList.add('js');try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('boot-played')){d.setAttribute('data-boot','play');setTimeout(function(){d.removeAttribute('data-boot')},7000)}}catch(e){}})();`;
 
 export default async function LangLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;

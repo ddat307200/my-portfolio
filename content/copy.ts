@@ -1,14 +1,7 @@
 import type { L, Locale } from "@/lib/i18n";
 
-/** Section anchors, shared by both languages. */
-export const ids = {
-  services: "services",
-  process: "process",
-  projects: "projects",
-  about: "about",
-  notes: "notes",
-  contact: "contact",
-} as const;
+export { ids } from "./ids";
+import { ids } from "./ids";
 
 type Copy = {
   meta: { title: string; description: string };
