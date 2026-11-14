@@ -5,7 +5,7 @@
  */
 import { consoleCopy } from "../../content/console";
 
-type Item = { label: string; hint: string; run: () => void };
+type Item = { label: string; hint: string; run: () => void; lang?: string };
 
 let dialog: HTMLDialogElement | null = null;
 let opener: HTMLElement | null = null;
@@ -32,7 +32,8 @@ function items(locale: "vi" | "en"): Item[] {
     });
   });
   const lang = document.querySelector<HTMLAnchorElement>("[data-lang-switch]");
-  if (lang) list.push({ label: t.switchLang, hint: t.groupActions, run: () => (window.location.href = lang.href) });
+  if (lang)
+    list.push({ label: t.switchLang, hint: t.groupActions, lang: lang.hreflang || undefined, run: () => (window.location.href = lang.href) });
   const copyBtn = document.querySelector<HTMLButtonElement>("[data-copy-email]");
   if (copyBtn?.dataset.copyEmail) {
     const email = copyBtn.dataset.copyEmail;
@@ -114,6 +115,7 @@ export function openPalette(from?: HTMLElement | null) {
       }`;
       const a = document.createElement("span");
       a.textContent = it.label;
+      if (it.lang) a.lang = it.lang;
       const b = document.createElement("span");
       b.className = "shrink-0 text-[12px] text-muted";
       b.textContent = it.hint;

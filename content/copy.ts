@@ -83,7 +83,7 @@ export const copy: Record<Locale, Copy> = {
     meta: {
       title: "Dang Tien Dat · Công cụ web và tự động hóa bằng AI",
       description:
-        "Lập trình viên full-stack xây công cụ web và tự động hóa bằng AI cho những việc lặp đi lặp lại trong đội nhóm nhỏ: nhập liệu, soạn thảo, đối chiếu, báo cáo.",
+        "Lập trình viên full-stack xây công cụ web và tự động hóa bằng AI cho những việc lặp đi lặp lại trong đội nhóm nhỏ. Có terminal chạy được và hai công cụ thử ngay trong trình duyệt.",
     },
     skip: "Bỏ qua tới nội dung",
     nav: {
@@ -199,7 +199,7 @@ export const copy: Record<Locale, Copy> = {
     meta: {
       title: "Dang Tien Dat · Web tools and AI automation",
       description:
-        "Full-stack developer building web tools and AI automation for repetitive work in small teams: data entry, drafting, reconciling, reporting.",
+        "Full-stack developer building web tools and AI automation for repetitive work in small teams. Includes a working terminal and two tools you can try in the browser.",
     },
     skip: "Skip to content",
     nav: {
