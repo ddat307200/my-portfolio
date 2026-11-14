@@ -1,6 +1,6 @@
 # Portfolio · Dang Tien Dat
 
-Trang portfolio một trang, nền đen, hero dạng hội thoại (hoạt ảnh **mô phỏng** có kịch bản, không phải AI thật). Song ngữ `/vi` và `/en`, xuất tĩnh, không backend, không script bên thứ ba.
+Trang portfolio một trang, nền đen, kiểu bảng điều khiển kỹ thuật (bản **V2**). Hero là terminal chạy được (**kịch bản cố định, không phải AI**), kèm bảng đo đạc trực tiếp, hai công cụ chạy thử trong trình duyệt và sơ đồ kiến trúc minh họa. Song ngữ `/vi` và `/en`, xuất tĩnh, không backend, không script bên thứ ba. Bản V1 (hero chat mô phỏng) được giữ ở git tag `v1`: `git checkout v1`.
 
 ## Phiên bản (kiểm tra bằng `npm view` ngày 2026-11-14)
 
@@ -9,8 +9,10 @@ Trang portfolio một trang, nền đen, hero dạng hội thoại (hoạt ảnh
 | next | 16.4.6 | App Router, `output: 'export'`, build bằng webpack (`next build --webpack`) |
 | react / react-dom | 19.3.1 | chỉ dùng lúc build (render HTML); trang đăng lên không tải React |
 | tailwindcss / @tailwindcss/postcss | 4.3.5 | |
-| motion | 14.14.0 | `inView` (hiện dần khi cuộn), đóng gói vào `enhance.js` |
-| esbuild | 0.28.2 | đóng gói `lib/client/enhance.ts` → `public/enhance.js` |
+| motion | 14.14.0 | `inView` (hiện dần khi cuộn), đóng gói vào `js/core.js` |
+| esbuild | 0.28.2 | đóng gói `lib/client/*.ts` → `public/js/` (ES module, tách chunk) |
+| puppeteer-core | 25.17.0 | chỉ dùng để đo (FPS, INP) bằng Chrome có sẵn; không vào bản đăng |
+| lighthouse | 13.6.0 | chạy qua `npx` trong `scripts/lighthouse.mjs`, không cài vào dự án |
 | typescript | 6.0.3 | 7.0.2 là bản mới nhất nhưng `typescript-eslint` (qua `eslint-config-next`) chưa hỗ trợ TS 7 nên `npm run lint` hỏng; dùng 6.0.3 cho tới khi hỗ trợ |
 | eslint / eslint-config-next | 9.39.x / 16.4.6 | |
 | gray-matter, marked | 4.0.3, 18.2.0 | chỉ chạy lúc build để đọc `content/notes/*.md` |
@@ -53,25 +55,57 @@ npm run typecheck
 npm run size
 ```
 
-`npm run size` in dung lượng JS tải ban đầu (gzip) của từng route trong `out/`.
+`npm run size` in dung lượng JS (gzip) của từng route trong `out/`: **lần đầu** (script trong HTML + import tĩnh) và **tổng** sau khi nạp hết chunk lười.
+
+```bash
+npm test
+```
+
+`npm test` chạy test đơn vị (`node --test`) cho hai hàm của demo: `lib/demos/extract.ts` (trích xuất đơn hàng) và `lib/demos/reconcile.ts` (đối chiếu CSV), gồm ca bình thường, ca lỗi, ca rỗng.
+
+### Đo hiệu năng (cần `npm run start` đang chạy)
+
+```bash
+CHROME_PATH="C:/Program Files/Google/Chrome/Application/chrome.exe" node scripts/lighthouse.mjs --runs 5
+```
+
+Chạy Lighthouse mobile N lần (mặc định 3) cho `/vi/` và `/en/`, ghi **trung vị** và từng lần chạy vào `content/lighthouse.json`. Bảng đo trên trang đọc file này sau lần build kế tiếp; **không sửa tay**. Chưa chạy thì trang hiện "chưa đo". Điểm Performance dao động vài điểm giữa các lần (chủ yếu qua TBT) nên chỉ so sánh trung vị.
+
+```bash
+CHROME_PATH=... node scripts/measure-fps.mjs
+CHROME_PATH=... node scripts/measure-inp.mjs
+```
+
+Đo FPS thật (rAF) và INP của trang production dưới CPU giả lập 4x bằng Chrome DevTools Protocol.
 
 ### Cách trang chạy JavaScript
 
-Mọi trang được Next.js render thành HTML đầy đủ lúc build, và không có component nào cần hydrate (dự án không có `"use client"`). Mọi tương tác nằm trong **một** script nhỏ là `lib/client/enhance.ts`: hoạt ảnh hero, hiện dần khi cuộn bằng Motion `inView`, ánh sáng theo chuột, nút sao chép email, và nút đổi ngôn ngữ giữ nguyên trang con. esbuild đóng gói script này thành `public/enhance.js`, khoảng 1,6KB gzip.
+Mọi trang được Next.js render thành HTML đầy đủ lúc build, và không có component nào cần hydrate (dự án không có `"use client"`). Mọi tương tác nằm trong `lib/client/`, esbuild đóng gói thành ES module có tách chunk ở `public/js/`:
 
-Bước postbuild gỡ runtime React/Next khỏi HTML xuất ra. Nhờ vậy JS ban đầu giảm từ khoảng 133KB xuống khoảng 1,6KB, nằm trong ngân sách 120KB của brief. Hệ quả: liên kết giữa các trang là điều hướng thường (tải lại trang), không có prefetch kiểu SPA. Trong `npm run dev`, React vẫn hydrate như bình thường.
+- `core.js` (~2,6KB gzip, **duy nhất** script được HTML tham chiếu): hiện dần khi cuộn, ánh sáng theo chuột, nút sao chép email, menu mobile, đổi ngôn ngữ giữ trang con, và các bộ nạp lười bên dưới.
+- Chunk nạp lười bằng `import()`: `terminal` (sau idle), `palette` (lần đầu bấm Ctrl/Cmd+K), `telemetry` (khi mục đo đạc gần vào màn hình), `canvas` (sau idle, chỉ khi có chuột thật), `demos` và `diagram` (khi gần vào màn hình), `buildinfo`.
+
+Bước postbuild gỡ runtime React/Next khỏi HTML xuất ra, nên JS cho lần hiển thị đầu chỉ vài KB (ngân sách ≤ 120KB). Hệ quả: liên kết giữa các trang là điều hướng thường, không có prefetch kiểu SPA. Trong `npm run dev` React vẫn hydrate như bình thường.
 
 `npm run build` gồm 3 bước:
-1. `prebuild`:
-   - `scripts/check-placeholders.mjs` **dừng build** nếu trong `content/` còn chỗ giữ chỗ dạng hai dấu ngoặc nhọn. Muốn bỏ qua khi thử nghiệm thì đặt `NODE_ENV=development`.
-   - `scripts/build-enhance.mjs` đóng gói `enhance.js`.
-2. `next build --webpack`: xuất tĩnh ra `out/`.
-3. `postbuild` (`scripts/postbuild.mjs`):
-   - Gỡ các script runtime của Next. Chỉ giữ các script có `id` là `pre-paint`, `enhance`, `lang-redirect`, và JSON-LD.
-   - Xóa file payload RSC và các route canh gác `__none`.
-   - Ghi `out/.nojekyll`, và ghi `out/CNAME` từ `domain` trong `content/site.ts` (khi không dùng `basePath`).
+1. `prebuild`: `scripts/check-placeholders.mjs` **dừng build** nếu trong `content/` còn chỗ giữ chỗ dạng hai dấu ngoặc nhọn; `scripts/build-client.mjs` đóng gói `public/js/`.
+2. `next build --webpack`: xuất tĩnh ra `out/` (CSS được nhúng thẳng vào HTML: `experimental.inlineCss`).
+3. `postbuild`: gỡ script runtime của Next (chỉ giữ script có `id` là `pre-paint`, `core`, `lang-redirect` và JSON-LD), xóa file RSC và route tạm `__none`, **ghi `out/build-info.json`** (commit git, thời điểm build, JS gzip từng route, điểm Lighthouse gần nhất, đều là số đo/ghi lúc build), ghi `.nojekyll` và `CNAME`.
 
-**Lưu ý khi thêm component mới:** nếu cần tương tác, viết vào `lib/client/enhance.ts` rồi điều khiển qua thuộc tính `data-*`. Không dùng `"use client"`, vì trên trang đăng lên component đó sẽ không chạy.
+**Khi thêm tương tác mới:** viết vào `lib/client/` (module nạp lười nếu nặng), điều khiển bằng thuộc tính `data-*`, và để CSS quyết định bố cục ban đầu (dựa vào `html.js`) thay vì để JS đổi chiều cao sau khi tải: việc đó từng làm các anchor nhảy sai chỗ.
+
+### Các khối V2
+
+| Mục | Nội dung | Ghi chú trung thực |
+|---|---|---|
+| `[00]` hero | terminal chạy được: `help`, `whoami`, `ls projects`, `cat contact`, `stack`, `status`, `open`, `lang`, `clear`, `sudo hire me`; Tab gợi ý, ↑↓ lịch sử, Esc thoát | ghi rõ "kịch bản cố định, không phải AI"; bản ghi `whoami` + `status` có sẵn trong HTML |
+| `[01]` status | FPS, LCP, CLS, INP, viewport, DPR, số lõi, JS đã tải (live); commit, build, JS gzip, Lighthouse (build) | chưa đo thì ghi "chưa đo"; không có uptime hay lượt truy cập |
+| `[03]` run | trích xuất đơn hàng bằng regex; đối chiếu hai CSV, xuất CSV | chạy trong trình duyệt, không gửi dữ liệu; **không phải case study**, không nêu kết quả kinh doanh |
+| `[04]` architecture | sơ đồ SVG có dòng chảy, mô tả từng khối | ghi "ví dụ minh họa, không phải hệ thống của khách nào" |
+| Nền hero | canvas 2D, ≤ 25% cam | chỉ bật với chuột thật và không giảm chuyển động; tự giảm điểm dưới 50 FPS, tự tắt dưới 30 FPS |
+| `Ctrl/Cmd+K` | bảng lệnh (nhảy tới mục, đổi ngôn ngữ, sao chép email) | nhãn nút theo hệ điều hành: `Ctrl K` / `⌘K` / biểu tượng trên cảm ứng |
+
+Thẻ dự án "Công cụ web nhỏ" đã chuyển sang "Bản chạy thử" (hai demo ở `[03]`). Hai thẻ còn lại vẫn là "Sắp ra mắt". Chưa có liên kết mã nguồn vì chưa có repo công khai.
 
 ## Sửa nội dung
 
@@ -142,18 +176,21 @@ MSYS_NO_PATHCONV=1 NEXT_PUBLIC_BASE_PATH=/portfolio npm run build
 - **README hồ sơ:** tạo repo công khai tên đúng bằng username (`ddat307200/ddat307200`), thêm `README.md` (vài dòng giới thiệu và liên kết tới trang). Nội dung sẽ hiện trên trang hồ sơ GitHub.
 - **Repo trang cá nhân:** đẩy dự án này lên repo công khai (ví dụ `portfolio`). Khi đó mới thêm `links.source` cho dự án nào có mã nguồn thật.
 
-## Kiểm thử đã làm (bản build production, 2026-11-14)
+## Kết quả đo (bản build production, commit ghi trong `content/lighthouse.json`)
 
-- Lighthouse 13.6.0, **mobile**, Chrome headless, server `npm run start`:
+Lighthouse 13.6.0 **mobile** (4G giả lập + CPU 4x), Chrome headless, trung vị của 5 lần chạy:
 
-| Route | Performance | Accessibility | Best Practices | SEO | LCP | CLS | TBT |
+| Route | Performance | A11y | Best Practices | SEO | LCP | TBT | CLS |
 |---|---|---|---|---|---|---|---|
-| `/vi/` | 100 | 100 | 100 | 100 | 1,0 s | 0,002 | 70 ms |
-| `/en/` | 100 | 100 | 100 | 100 | 0,9 s | 0,001 | 0 ms |
+| `/vi/` | 97 (93–99) | 100 | 100 | 100 | 1036 ms | 199 ms | 0,001 |
+| `/en/` | 100 (99–100) | 100 | 100 | 100 | 995 ms | 90 ms | 0,03 |
 
-- JS ban đầu (`npm run size`, gzip): `/vi/` và `/en/` **1,6KB** (`enhance.js`); Lighthouse đo được 1,9KB truyền về. Trang `/` và trang 404 không tải file JS nào (`/` chỉ có script chuyển hướng nội tuyến).
-- Các bước của workflow CI (`npm ci` → lint → typecheck → build) đã chạy thử trên một bản sao sạch, cả có và không có `BASE_PATH`. `typecheck` chạy `next typegen` trước `tsc`, vì kiểu `PageProps`/`LayoutProps` do Next sinh ra. Việc đăng thật lên Pages/Cloudflare chưa làm: cần repo và tên miền của chủ trang.
-- Đã kiểm tra: bàn phím (liên kết bỏ qua, thứ tự tab, vòng focus 3px), `prefers-reduced-motion`, không JavaScript, các độ rộng 360/768/1280/1920px không tràn ngang, console không lỗi (cả bản production và `npm run dev`).
+- JS (`npm run size`, gzip): lần đầu **2,6KB**, tổng sau khi nạp hết chunk **22,9KB** (ngân sách: ≤ 120KB lần đầu, ≤ 300KB tổng). Phần tử LCP là đoạn chữ hero, không phải canvas.
+- FPS đo bằng rAF dưới CPU 4x (headless, máy dev, 5 giây rê chuột): desktop 71,2; mobile 360px 71,7 (canvas tắt trên cảm ứng, dùng nền tĩnh).
+- **INP: chưa đạt ngân sách trong phép đo tổng hợp.** Kịch bản robot dưới CPU 4x cho khoảng 500ms trên desktop (70–100ms mobile). Trace không thấy việc nặng trên luồng chính (tác vụ lớn nhất 68ms), nên phần trễ nằm ở khâu dựng khung hình của Chrome headless; **chưa đo trên thiết bị thật**.
+- Style & Layout vẫn khoảng 0,8–1,0 giây trên luồng chính trong Lighthouse (trước khoảng 1,1 giây).
+- Đã kiểm tra: bàn phím (menu mobile, Esc, Ctrl/Cmd+K, vòng focus 3px), `prefers-reduced-motion`, không JavaScript, 360/1280px không tràn ngang, console không lỗi, không còn chữ dưới 12px, anchor nhảy đúng chỗ.
+- **Chưa kiểm tra:** điện thoại thật, Mac thật (nhãn `⌘K` mới giả lập), trình đọc màn hình thật.
 
 ## Cấu trúc
 
@@ -166,9 +203,12 @@ app/
   og.png/            ảnh Open Graph tĩnh, sinh lúc build
   sitemap.ts, robots.ts
   global-not-found.tsx  trang 404 chung (out/404.html)
-components/          HeroChat, các section (đều là server component)
-content/             dữ liệu: site.ts, copy.ts, projects.ts, notes/
+components/          Terminal, Frame, các section (đều là server component)
+content/             dữ liệu: site.ts, copy.ts, console.ts, demos.ts, projects.ts, lighthouse.json, notes/
 lib/                 i18n, đọc Markdown, tiện ích
-lib/client/enhance.ts  script duy nhất chạy trên trình duyệt
-scripts/             kiểm tra chỗ giữ chỗ, đóng gói enhance, postbuild, server xem thử, đo JS
+lib/client/          core.ts (entry) + terminal, palette, telemetry, canvas, demos, diagram (nạp lười)
+lib/demos/           extract.ts, reconcile.ts, samples.ts (không phụ thuộc gì, tách repo được)
+lib/terminal/        commands.ts (lệnh terminal, dùng cả lúc build lẫn trên trình duyệt)
+tests/               test đơn vị cho lib/demos
+scripts/             kiểm tra chỗ giữ chỗ, đóng gói client, postbuild, server xem thử, đo JS/Lighthouse/FPS/INP
 ```
